@@ -1,4 +1,11 @@
-import { LogOut, Pencil, Plus, Trash2 } from "lucide-react";
+import {
+  CheckCircle,
+  LogOut,
+  Pencil,
+  Plus,
+  Trash2,
+  XCircle,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "../lib/router";
@@ -78,6 +85,18 @@ export default function AdminDashboard() {
   const deleteProduct = (id: string) => {
     saveProducts(products.filter((p) => p.id !== id));
     toast.success("Product deleted");
+  };
+  const toggleAvailability = (id: string) => {
+    const updated = products.map((p) =>
+      p.id === id ? { ...p, isAvailable: !p.isAvailable } : p,
+    );
+    saveProducts(updated);
+    const prod = updated.find((p) => p.id === id);
+    toast.success(
+      prod?.isAvailable
+        ? "Product marked Available"
+        : "Product marked Unavailable",
+    );
   };
   const deleteCategory = (id: string) => {
     saveCategories(categories.filter((c) => c.id !== id));
@@ -297,7 +316,7 @@ export default function AdminDashboard() {
                 <div
                   key={p.id}
                   data-ocid={`admin.product.${idx + 1}`}
-                  className="bg-white rounded-2xl p-3 shadow-sm flex items-center gap-3"
+                  className={`rounded-2xl p-3 shadow-sm flex items-center gap-3 ${p.isAvailable ? "bg-white" : "bg-gray-50 opacity-70"}`}
                 >
                   <img
                     src={p.imageUrl}
@@ -317,6 +336,21 @@ export default function AdminDashboard() {
                       {!p.isAvailable && "(Unavailable)"}
                     </p>
                   </div>
+                  <button
+                    type="button"
+                    data-ocid={`admin.product.${idx + 1}.toggle`}
+                    onClick={() => toggleAvailability(p.id)}
+                    className={`p-1.5 rounded-lg ${p.isAvailable ? "bg-green-50" : "bg-gray-100"}`}
+                    title={
+                      p.isAvailable ? "Mark Unavailable" : "Mark Available"
+                    }
+                  >
+                    {p.isAvailable ? (
+                      <CheckCircle size={14} className="text-green-600" />
+                    ) : (
+                      <XCircle size={14} className="text-gray-400" />
+                    )}
+                  </button>
                   <button
                     type="button"
                     data-ocid={`admin.product.${idx + 1}.edit_button`}

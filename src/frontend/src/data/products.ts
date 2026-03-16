@@ -62,23 +62,6 @@ export const WEIGHT_MULTIPLIER: Record<string, number> = {
 const gd = (id: string) =>
   `https://drive.google.com/thumbnail?id=${id}&sz=w400`;
 
-// ── Goldiee uploaded images ──────────────────────────────────────────────────
-const G_DRY_MANGO = "/assets/uploads/IMG-20260315-WA0042-1.jpg";
-const G_KITCHEN_KING = "/assets/uploads/IMG-20260315-WA0052-2.jpg";
-const G_GOLGAPPE = "/assets/uploads/IMG-20260315-WA0047-3.jpg";
-const G_HALDI = "/assets/uploads/IMG-20260315-WA0034-4.jpg";
-const G_KITCHEN_KING2 = "/assets/uploads/IMG-20260315-WA0052-1-5.jpg";
-const G_PAV_BHAJI = "/assets/uploads/IMG-20260315-WA0033-6.jpg";
-const G_JALJEERA = "/assets/uploads/IMG-20260315-WA0049-7.jpg";
-const G_SABJI = "/assets/uploads/IMG-20260315-WA0038-9.jpg";
-const G_DAL_MAKHANI = "/assets/uploads/IMG-20260315-WA0046-10.jpg";
-const G_KASHMIRI_MIRCH = "/assets/uploads/IMG-20260315-WA0043-11.jpg";
-const G_RAYTA_MINT = "/assets/uploads/IMG-20260315-WA0044-13.jpg";
-const G_BIRYANI = "/assets/uploads/IMG-20260315-WA0040-14.jpg";
-const G_DHANIYA = "/assets/uploads/IMG-20260315-WA0037-15.jpg";
-const G_CHAAT = "/assets/uploads/IMG-20260315-WA0045-16.jpg";
-const G_SAMBHAR = "/assets/uploads/IMG-20260315-WA0048-17.jpg";
-
 export const PRODUCTS: Product[] = [
   // ── DAL & CHANA (links 29-46) ───────────────────────────────────────────────
   {
@@ -166,7 +149,7 @@ export const PRODUCTS: Product[] = [
     size: "1kg",
     isPacked: false,
     price: 135,
-    imageUrl: "",
+    imageUrl: gd("1s3fcvEjWHwpKwMTbTtsETdpdKD1rFvx_"),
     isAvailable: true,
   },
   {
@@ -221,7 +204,7 @@ export const PRODUCTS: Product[] = [
     size: "1kg",
     isPacked: false,
     price: 85,
-    imageUrl: "",
+    imageUrl: gd("1iY-16B0ZwtjOiAjmPE-MqTf7uS_2uuiL"),
     isAvailable: true,
   },
   {
@@ -691,7 +674,7 @@ export const PRODUCTS: Product[] = [
     size: "Small Pack",
     isPacked: true,
     price: 9,
-    imageUrl: gd("1kUgACErgpXSS8GEhvQUDVOoY8M7UiD_o"),
+    imageUrl: gd("1kVf6A-QH8OVo5DL3AlRxXI6zMNZBO9cL"),
     isAvailable: true,
   },
   {
@@ -702,7 +685,7 @@ export const PRODUCTS: Product[] = [
     size: "Big Pack",
     isPacked: true,
     price: 18,
-    imageUrl: gd("1kUgACErgpXSS8GEhvQUDVOoY8M7UiD_o"),
+    imageUrl: gd("1kVf6A-QH8OVo5DL3AlRxXI6zMNZBO9cL"),
     isAvailable: true,
   },
   {
@@ -1285,18 +1268,18 @@ export const PRODUCTS: Product[] = [
     size: "10g",
     isPacked: false,
     price: 10,
-    imageUrl: gd("1OB83pzBIgAVxPOZ2F8OMwczsUenxh7FJ"),
+    imageUrl: gd("1qCvZOzBd5vkgkV_lQsm56pV0rvYrBuDO"),
     isAvailable: true,
   },
   {
     id: "dye-02",
-    name: "Blue Dye",
+    name: "Light Blue Dye",
     categoryId: "dye",
-    description: "Fabric dye blue",
+    description: "Fabric dye light blue",
     size: "10g",
     isPacked: false,
     price: 10,
-    imageUrl: gd("1ODDnZhs8AbJu3A5JiWQ5yJavtLlzdLa0"),
+    imageUrl: gd("1oyZX5mcwq2PEKsLk-dWEp1IgQ2x9xOHX"),
     isAvailable: true,
   },
   {
@@ -1307,7 +1290,7 @@ export const PRODUCTS: Product[] = [
     size: "10g",
     isPacked: false,
     price: 10,
-    imageUrl: gd("1OF_rbLvGDHNrxiFNvC6HS0UttNU2Au8S"),
+    imageUrl: gd("1phOdmB7jxHm0_0ZnUebuF-v4UZxjMVLO"),
     isAvailable: true,
   },
   {
@@ -1318,7 +1301,7 @@ export const PRODUCTS: Product[] = [
     size: "10g",
     isPacked: false,
     price: 10,
-    imageUrl: gd("1Oj35tWxOyaZdbmQvv_WKszX0kyAnhzWi"),
+    imageUrl: gd("1otmA577fK-CapmD9_-kKo7YLgX6OJhIV"),
     isAvailable: true,
   },
   {
@@ -1329,7 +1312,7 @@ export const PRODUCTS: Product[] = [
     size: "10g",
     isPacked: false,
     price: 10,
-    imageUrl: gd("1OKdfM_SIohwaODtDVksAGk03dMoy-Gex"),
+    imageUrl: gd("1ped2O6t4JVwRsOn-ke3IrUYhBngWsH3Q"),
     isAvailable: true,
   },
   {
@@ -1340,7 +1323,7 @@ export const PRODUCTS: Product[] = [
     size: "10g",
     isPacked: false,
     price: 10,
-    imageUrl: gd("1OLJ-6uML4TAlGr6M2eU_C4x5984T_hnk"),
+    imageUrl: gd("1pMIr6HaERhysOG84Wvajqr_XpdBVzm1b"),
     isAvailable: true,
   },
   {
@@ -1351,7 +1334,7 @@ export const PRODUCTS: Product[] = [
     size: "10g",
     isPacked: false,
     price: 10,
-    imageUrl: gd("1ONfPK1EjF8wY8H6M79w9yiKRXzNMjzmM"),
+    imageUrl: gd("1p5l3cKjeHmY1z9e1DSYLDJgrYB1V5Ev_"),
     isAvailable: true,
   },
   {
@@ -1362,7 +1345,7 @@ export const PRODUCTS: Product[] = [
     size: "10g",
     isPacked: false,
     price: 10,
-    imageUrl: gd("1OO64z_-PnYcl7M0V89WuOHVwXt_eFK_o"),
+    imageUrl: gd("1p8qgd5xuWLtHOWX8EYK7_efxVyHVVwN_"),
     isAvailable: true,
   },
   {
@@ -1373,7 +1356,7 @@ export const PRODUCTS: Product[] = [
     size: "10g",
     isPacked: false,
     price: 10,
-    imageUrl: gd("1OQ0LqX3ojaVwa_JyW96-MSF2Q9f1UDWk"),
+    imageUrl: gd("1oqwzOz-WPTRuG0xIRSrLQT91GQHY9qpL"),
     isAvailable: true,
   },
   {
@@ -1384,7 +1367,7 @@ export const PRODUCTS: Product[] = [
     size: "10g",
     isPacked: false,
     price: 10,
-    imageUrl: gd("1OURZTCc3yY0g5tA5SKBUUb2SAKZui6DC"),
+    imageUrl: gd("1pqUlerJajaQNraldVOv8S5A39uaQR8bx"),
     isAvailable: true,
   },
   {
@@ -1395,7 +1378,7 @@ export const PRODUCTS: Product[] = [
     size: "10g",
     isPacked: false,
     price: 10,
-    imageUrl: gd("1OcCezQW3zBazwyS3qjkH8I1VvKOFFswR"),
+    imageUrl: gd("1pqUlerJajaQNraldVOv8S5A39uaQR8bx"),
     isAvailable: true,
   },
   {
@@ -1406,7 +1389,7 @@ export const PRODUCTS: Product[] = [
     size: "10g",
     isPacked: false,
     price: 10,
-    imageUrl: gd("1OkfJ3-tL2YqfKhV7s3bI-WWCmKhbw-GZ"),
+    imageUrl: gd("1p2lGVyYZBqRvmFbeG2tJFnxxmQhvp5hh"),
     isAvailable: true,
   },
   {
@@ -1417,7 +1400,7 @@ export const PRODUCTS: Product[] = [
     size: "10g",
     isPacked: false,
     price: 10,
-    imageUrl: gd("1Oko74kN5vW9eAdfdrK1vTquMaY6_jxfu"),
+    imageUrl: gd("1ojCZroShftDiK-UbFinjQXcHvGZaFZHo"),
     isAvailable: true,
   },
   {
@@ -1428,7 +1411,7 @@ export const PRODUCTS: Product[] = [
     size: "10g",
     isPacked: false,
     price: 10,
-    imageUrl: gd("1Ow0ofhSFsUt23np16_BWmlVdFAqHKFOD"),
+    imageUrl: gd("1pfwlhtlumsSefm4IOGhsiK8DU2LswiJg"),
     isAvailable: true,
   },
 
@@ -1499,7 +1482,7 @@ export const PRODUCTS: Product[] = [
     size: "12g",
     isPacked: true,
     price: 9,
-    imageUrl: G_HALDI,
+    imageUrl: gd("1nTlhUIw5GXXaCHn5oQHBFTsjDY308Od9"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1511,7 +1494,7 @@ export const PRODUCTS: Product[] = [
     size: "12g",
     isPacked: true,
     price: 9,
-    imageUrl: G_KASHMIRI_MIRCH,
+    imageUrl: gd("1n8EbRL8lWS8ONmOe7M3XbiexO25mYr4L"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1523,7 +1506,7 @@ export const PRODUCTS: Product[] = [
     size: "12g",
     isPacked: true,
     price: 9,
-    imageUrl: G_DHANIYA,
+    imageUrl: gd("1nTHmbVSUajuLXCjpHwjtLqrSSyptISLC"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1535,7 +1518,7 @@ export const PRODUCTS: Product[] = [
     size: "12g",
     isPacked: true,
     price: 9,
-    imageUrl: G_KITCHEN_KING2,
+    imageUrl: gd("1nDoLi0BkqFlB-qTKBguzR144wSoqDBgd"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1547,7 +1530,7 @@ export const PRODUCTS: Product[] = [
     size: "12g",
     isPacked: true,
     price: 9,
-    imageUrl: G_SABJI,
+    imageUrl: gd("1nDf3McAbrOprmnJjUtgygOe6mcLaLhCW"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1559,7 +1542,7 @@ export const PRODUCTS: Product[] = [
     size: "12g",
     isPacked: true,
     price: 9,
-    imageUrl: G_CHAAT,
+    imageUrl: gd("1nZjmWuPNN9gIQFDDBhijJAZz1AdjIegh"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1571,7 +1554,7 @@ export const PRODUCTS: Product[] = [
     size: "12g",
     isPacked: true,
     price: 9,
-    imageUrl: G_KITCHEN_KING,
+    imageUrl: gd("1oDLf8EbqGJswxbgNPui8Q6LOmBLA7XqH"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1583,7 +1566,7 @@ export const PRODUCTS: Product[] = [
     size: "12g",
     isPacked: true,
     price: 9,
-    imageUrl: G_PAV_BHAJI,
+    imageUrl: gd("1nSt6uGsNW2PQRHGFgsJZw-6_24pYKIpB"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1595,7 +1578,7 @@ export const PRODUCTS: Product[] = [
     size: "12g",
     isPacked: true,
     price: 9,
-    imageUrl: G_BIRYANI,
+    imageUrl: gd("1nXLHcK9eG972JCRrsv78xdQE65ud182T"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1607,7 +1590,7 @@ export const PRODUCTS: Product[] = [
     size: "12g",
     isPacked: true,
     price: 9,
-    imageUrl: G_SABJI,
+    imageUrl: gd("1ngP-BMfzFIMkRardcURZ8Tfndn9PzBpk"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1619,7 +1602,7 @@ export const PRODUCTS: Product[] = [
     size: "12g",
     isPacked: true,
     price: 9,
-    imageUrl: G_RAYTA_MINT,
+    imageUrl: gd("1rnTpvkbvNHxMW9hLCqWf8nbLoE5M2Eog"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1631,7 +1614,7 @@ export const PRODUCTS: Product[] = [
     size: "12g",
     isPacked: true,
     price: 9,
-    imageUrl: G_DAL_MAKHANI,
+    imageUrl: gd("1nwyhtIV9pggllFvy0lLxNTK4Etuw2CxH"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1643,7 +1626,7 @@ export const PRODUCTS: Product[] = [
     size: "12g",
     isPacked: true,
     price: 9,
-    imageUrl: G_DAL_MAKHANI,
+    imageUrl: gd("1nrYVxNBCL-dnrJ00U5nZgfDh48TRp3kp"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1655,7 +1638,7 @@ export const PRODUCTS: Product[] = [
     size: "12g",
     isPacked: true,
     price: 9,
-    imageUrl: G_SAMBHAR,
+    imageUrl: gd("1o-Oax5owh0aWZacSFwaUYNh8YAW-q1fF"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1667,7 +1650,7 @@ export const PRODUCTS: Product[] = [
     size: "12g",
     isPacked: true,
     price: 9,
-    imageUrl: G_DRY_MANGO,
+    imageUrl: gd("1nzaswVPjYh6aJZxEaOAECxuqWIEApTyf"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1679,7 +1662,7 @@ export const PRODUCTS: Product[] = [
     size: "50g",
     isPacked: true,
     price: 25,
-    imageUrl: G_BIRYANI,
+    imageUrl: gd("1n4L_jgkUQ9WbcVBqvaT5zSUiG2RT6RT-"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1691,7 +1674,7 @@ export const PRODUCTS: Product[] = [
     size: "12g",
     isPacked: true,
     price: 9,
-    imageUrl: G_RAYTA_MINT,
+    imageUrl: gd("1nxiqGEZost2boGew6KLdnk9msSABLQvB"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1703,7 +1686,7 @@ export const PRODUCTS: Product[] = [
     size: "12g",
     isPacked: true,
     price: 9,
-    imageUrl: G_KASHMIRI_MIRCH,
+    imageUrl: gd("1nWTviS3-dNtFN5UZ-ITFwhIXwKauQqnW"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1715,7 +1698,7 @@ export const PRODUCTS: Product[] = [
     size: "12g",
     isPacked: true,
     price: 9,
-    imageUrl: G_JALJEERA,
+    imageUrl: gd("1o0TB9rw-DS8EropY7fyYMaUcI9UVSM-t"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1727,7 +1710,7 @@ export const PRODUCTS: Product[] = [
     size: "12g",
     isPacked: true,
     price: 9,
-    imageUrl: G_GOLGAPPE,
+    imageUrl: gd("1o3icWizcmwqG9nJuKQ5qf57RfQEFPPt4"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1739,7 +1722,7 @@ export const PRODUCTS: Product[] = [
     size: "8g",
     isPacked: true,
     price: 10,
-    imageUrl: G_CHAAT,
+    imageUrl: gd("1ptNMzdT92W4U95US8dc73omWb2Jvl0hm"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1751,7 +1734,7 @@ export const PRODUCTS: Product[] = [
     size: "15g",
     isPacked: true,
     price: 20,
-    imageUrl: G_CHAAT,
+    imageUrl: gd("1psdDaTvsUpw8r82LU-Y55Tnn7_2lp7lw"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1763,7 +1746,7 @@ export const PRODUCTS: Product[] = [
     size: "50g",
     isPacked: true,
     price: 100,
-    imageUrl: G_KITCHEN_KING2,
+    imageUrl: gd("1pypkBeAi3YTFxP9oWmyeYtltLKuLSuJ9"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1775,7 +1758,7 @@ export const PRODUCTS: Product[] = [
     size: "50g",
     isPacked: true,
     price: 170,
-    imageUrl: G_KITCHEN_KING2,
+    imageUrl: gd("1pzNiCWTNedV7E16V0W0xkUx26aPDJTmG"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1787,7 +1770,7 @@ export const PRODUCTS: Product[] = [
     size: "100g",
     isPacked: true,
     price: 320,
-    imageUrl: G_KITCHEN_KING2,
+    imageUrl: gd("1q9CS1-w4VLB_g_XXfQp_oNwWD7FDmPDV"),
     isAvailable: true,
     brand: "Goldiee",
   },
@@ -1801,7 +1784,8 @@ export const PRODUCTS: Product[] = [
     size: "250g",
     isPacked: true,
     price: 50,
-    imageUrl: "",
+    imageUrl:
+      "https://drive.google.com/uc?export=view&id=1qrKWeSZzS3sFLxFHIO71GPcYOSx-63wC",
     isAvailable: true,
     brand: "Goodtime",
   },
@@ -1813,7 +1797,8 @@ export const PRODUCTS: Product[] = [
     size: "250g",
     isPacked: true,
     price: 48,
-    imageUrl: "",
+    imageUrl:
+      "https://drive.google.com/uc?export=view&id=1qolN-DRio75i7ZLQyK1xjwMKDT5SXlV5",
     isAvailable: true,
     brand: "Tazza",
   },
@@ -1825,7 +1810,8 @@ export const PRODUCTS: Product[] = [
     size: "250g",
     isPacked: true,
     price: 115,
-    imageUrl: "",
+    imageUrl:
+      "https://drive.google.com/uc?export=view&id=1qlJbbmR6PNOrELHS9hTVQaUzpJThsta9",
     isAvailable: true,
     brand: "Tata",
   },

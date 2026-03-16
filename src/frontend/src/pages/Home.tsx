@@ -6,13 +6,12 @@ import { useApp } from "../contexts/AppContext";
 import { CATEGORIES, PRODUCTS } from "../data/products";
 import { useNavigate } from "../lib/router";
 
-// Re-export for legacy imports
 export const DEFAULT_CATEGORIES = CATEGORIES;
 export const DEFAULT_PRODUCTS = PRODUCTS;
 
 export default function Home() {
   const navigate = useNavigate();
-  const { cartCount } = useApp();
+  const { cartCount, t } = useApp();
   const [search, setSearch] = useState("");
 
   const popularProducts = PRODUCTS.filter((p) => p.isAvailable).slice(0, 8);
@@ -71,7 +70,7 @@ export default function Home() {
           <input
             data-ocid="home.search_input"
             type="text"
-            placeholder="Search products..."
+            placeholder={t("search_placeholder")}
             className="flex-1 text-sm outline-none bg-transparent"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -83,7 +82,7 @@ export default function Home() {
       {search.trim() && (
         <div className="px-4 mb-2">
           <p className="text-xs text-gray-500 mb-2">
-            {searchResults.length} results for "{search}"
+            {searchResults.length} {t("results_for")} "{search}"
           </p>
           <div className="grid grid-cols-2 gap-3">
             {searchResults.map((p) => (
@@ -125,7 +124,7 @@ export default function Home() {
           </div>
           {searchResults.length === 0 && (
             <p className="text-center text-sm text-gray-400 py-8">
-              No products found
+              {t("no_products")}
             </p>
           )}
         </div>
@@ -156,11 +155,10 @@ export default function Home() {
             <span className="text-lg">🏪</span>
             <div>
               <p className="text-amber-800 font-semibold text-xs">
-                Pickup Only
+                {t("pickup_only")}
               </p>
               <p className="text-amber-700 text-xs mt-0.5">
-                Customer ko order place karke shop par aana hoga — Mahavir Ganj,
-                Aligarh
+                {t("pickup_notice")}
               </p>
             </div>
           </div>
@@ -168,7 +166,7 @@ export default function Home() {
           {/* Categories */}
           <div className="px-4 mt-4">
             <h2 className="font-bold text-gray-800 text-sm mb-3">
-              All Categories
+              {t("all_categories")}
             </h2>
             <div className="grid grid-cols-4 gap-2">
               {CATEGORIES.map((cat) => (
@@ -194,7 +192,7 @@ export default function Home() {
           {/* Popular Products */}
           <div className="px-4 mt-5">
             <h2 className="font-bold text-gray-800 text-sm mb-3">
-              Popular Products
+              {t("popular_products")}
             </h2>
             <div className="grid grid-cols-2 gap-3">
               {popularProducts.map((p) => (
@@ -218,11 +216,9 @@ export default function Home() {
                       </div>
                     )}
                     <span
-                      className={`absolute top-2 right-2 text-white text-xs px-1.5 py-0.5 rounded-full font-medium ${
-                        p.isPacked ? "bg-blue-500" : "bg-orange-500"
-                      }`}
+                      className={`absolute top-2 right-2 text-white text-xs px-1.5 py-0.5 rounded-full font-medium ${p.isPacked ? "bg-blue-500" : "bg-orange-500"}`}
                     >
-                      {p.isPacked ? "Packed" : "Unpacked"}
+                      {p.isPacked ? t("packed") : t("unpacked")}
                     </span>
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-2 py-1.5">
                       <p className="text-white text-xs font-semibold leading-tight line-clamp-2">

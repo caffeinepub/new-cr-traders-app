@@ -2,18 +2,18 @@ import { Home, Package, RefreshCw, Settings, ShoppingCart } from "lucide-react";
 import { useApp } from "../contexts/AppContext";
 import { useLocation, useNavigate } from "../lib/router";
 
-const tabs = [
-  { path: "/home", icon: Home, label: "Home" },
-  { path: "/cart", icon: ShoppingCart, label: "Cart" },
-  { path: "/orders", icon: Package, label: "Orders" },
-  { path: "/orders", icon: RefreshCw, label: "Buy Again" },
-  { path: "/settings", icon: Settings, label: "Settings" },
-];
-
 export default function BottomNav() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { cartCount } = useApp();
+  const { cartCount, t } = useApp();
+
+  const tabs = [
+    { path: "/home", icon: Home, label: t("nav_home") },
+    { path: "/cart", icon: ShoppingCart, label: t("nav_cart") },
+    { path: "/orders", icon: Package, label: t("nav_orders") },
+    { path: "/orders", icon: RefreshCw, label: t("nav_buy_again") },
+    { path: "/settings", icon: Settings, label: t("nav_settings") },
+  ];
 
   return (
     <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-100 flex shadow-lg z-40">
@@ -30,7 +30,7 @@ export default function BottomNav() {
           >
             <div className="relative">
               <Icon size={20} />
-              {tab.label === "Cart" && cartCount > 0 && (
+              {tab.label === t("nav_cart") && cartCount > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs w-3.5 h-3.5 rounded-full flex items-center justify-center">
                   {cartCount}
                 </span>

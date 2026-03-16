@@ -5,7 +5,7 @@ import { useNavigate } from "../lib/router";
 
 export default function Cart() {
   const navigate = useNavigate();
-  const { cart, updateQuantity, removeFromCart, cartTotal } = useApp();
+  const { cart, updateQuantity, removeFromCart, cartTotal, t } = useApp();
 
   return (
     <div className="pb-32 bg-gray-50 min-h-screen">
@@ -17,18 +17,17 @@ export default function Cart() {
         >
           <ArrowLeft className="text-white" size={20} />
         </button>
-        <h1 className="text-white font-bold text-lg">My Cart</h1>
+        <h1 className="text-white font-bold text-lg">{t("my_cart")}</h1>
       </div>
 
       {/* Pickup Notice */}
       <div className="mx-4 mt-3 bg-amber-50 border border-amber-300 rounded-xl px-3 py-2.5 flex items-start gap-2">
         <span className="text-base">🏪</span>
         <div>
-          <p className="text-amber-800 font-semibold text-xs">Pickup Only</p>
-          <p className="text-amber-700 text-xs mt-0.5">
-            Please come to our shop to collect your order. Mahavir Ganj, Aligarh
-            – 9358251328
+          <p className="text-amber-800 font-semibold text-xs">
+            {t("pickup_only")}
           </p>
+          <p className="text-amber-700 text-xs mt-0.5">{t("pickup_cart")}</p>
         </div>
       </div>
 
@@ -38,14 +37,14 @@ export default function Cart() {
           className="flex flex-col items-center justify-center py-24"
         >
           <span className="text-6xl">🛒</span>
-          <p className="text-gray-500 mt-4 text-sm">Your cart is empty</p>
+          <p className="text-gray-500 mt-4 text-sm">{t("cart_empty")}</p>
           <button
             type="button"
             data-ocid="cart.primary_button"
             onClick={() => navigate("/home")}
             className="mt-4 bg-green-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold"
           >
-            Start Shopping
+            {t("start_shopping")}
           </button>
         </div>
       ) : (
@@ -114,15 +113,17 @@ export default function Cart() {
 
           <div className="mx-4 mt-4 bg-white rounded-2xl shadow-sm p-4">
             <div className="flex justify-between text-sm text-gray-600">
-              <span>Subtotal</span>
+              <span>{t("subtotal")}</span>
               <span>₹{cartTotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-sm text-gray-600 mt-1">
-              <span>Delivery</span>
-              <span className="text-green-600 font-medium">Pickup only</span>
+              <span>{t("delivery")}</span>
+              <span className="text-green-600 font-medium">
+                {t("pickup_only")}
+              </span>
             </div>
             <div className="border-t mt-2 pt-2 flex justify-between font-bold">
-              <span>Total</span>
+              <span>{t("total")}</span>
               <span className="text-green-700">₹{cartTotal.toFixed(2)}</span>
             </div>
           </div>
@@ -134,7 +135,7 @@ export default function Cart() {
               onClick={() => navigate("/checkout")}
               className="w-full bg-green-600 text-white py-3.5 rounded-2xl font-bold text-sm shadow-lg"
             >
-              Place Order via WhatsApp
+              {t("place_order")}
             </button>
           </div>
         </>

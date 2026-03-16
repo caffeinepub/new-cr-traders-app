@@ -4,6 +4,7 @@ import { Link, useNavigate } from "../lib/router";
 
 export default function SignIn() {
   const navigate = useNavigate();
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -13,14 +14,14 @@ export default function SignIn() {
     setLoading(true);
     const users = JSON.parse(localStorage.getItem("ncrt_users") || "[]");
     const user = users.find(
-      (u: { email: string; password: string }) =>
-        u.email === email && u.password === password,
+      (u: { phone: string; email: string; password: string }) =>
+        u.phone === phone && u.email === email && u.password === password,
     );
     if (user) {
       localStorage.setItem("ncrt_user", JSON.stringify(user));
       navigate("/home");
     } else {
-      toast.error("Invalid email or password");
+      toast.error("Invalid phone number, email or password.");
       setLoading(false);
     }
   };
@@ -50,14 +51,32 @@ export default function SignIn() {
           <form onSubmit={handleSignIn} className="space-y-4">
             <div>
               <label
+                htmlFor="signin-phone"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Phone Number
+              </label>
+              <input
+                id="signin-phone"
+                data-ocid="signin.input"
+                type="tel"
+                required
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500"
+                placeholder="10-digit mobile number"
+              />
+            </div>
+            <div>
+              <label
                 htmlFor="signin-email"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Email
+                Email Address
               </label>
               <input
                 id="signin-email"
-                data-ocid="signin.input"
+                data-ocid="signin.email_input"
                 type="email"
                 required
                 value={email}
@@ -75,7 +94,7 @@ export default function SignIn() {
               </label>
               <input
                 id="signin-password"
-                data-ocid="signin.input"
+                data-ocid="signin.password_input"
                 type="password"
                 required
                 value={password}
@@ -84,6 +103,7 @@ export default function SignIn() {
                 placeholder="Enter your password"
               />
             </div>
+
             <button
               type="submit"
               data-ocid="signin.submit_button"

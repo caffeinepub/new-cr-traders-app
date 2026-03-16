@@ -5,6 +5,11 @@ import {
   useEffect,
   useState,
 } from "react";
+import {
+  type LangKey,
+  type TranslationKey,
+  translations,
+} from "../lib/translations";
 
 export interface CartItem {
   productId: string;
@@ -25,9 +30,21 @@ interface AppContextType {
   cartCount: number;
   lastOrder: CartItem[] | null;
   setLastOrder: (items: CartItem[]) => void;
+  language: LangKey;
+  setLanguage: (lang: LangKey) => void;
+  t: (key: TranslationKey) => string;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
+const VALID_LANGS: LangKey[] = [
+  "English",
+  "Hindi",
+  "Marathi",
+  "Bengali",
+  "Punjabi",
+  "Kannada",
+  "Malayalam",
+];
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>(() => {
@@ -38,10 +55,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   });
   const [lastOrder, setLastOrder] = useState<CartItem[] | null>(null);
+  const [language, setLanguageState] = useState<LangKey>(() => {
+    const saved = localStorage.getItem("ncrt_lang") as LangKey;
+    return VALID_LANGS.includes(saved) ? saved : "English";
+  });
 
   useEffect(() => {
     localStorage.setItem("ncrt_cart", JSON.stringify(cart));
   }, [cart]);
+
+  const setLanguage = (lang: LangKey) => {
+    setLanguageState(lang);
+    localStorage.setItem("ncrt_lang", lang);
+  };
+
+  const t = (key: TranslationKey): string => translations[language][key];
 
   const addToCart = (item: CartItem) => {
     setCart((prev) => {
@@ -87,6 +115,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         cartCount,
         lastOrder,
         setLastOrder,
+        language,
+        setLanguage,
+        t,
       }}
     >
       {children}
