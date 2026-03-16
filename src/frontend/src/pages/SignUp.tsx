@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Link, useNavigate } from "../lib/router";
 
 const TERMS = `TERMS AND CONDITIONS - NEW C.R. TRADERS
 
@@ -11,26 +11,26 @@ GSTIN: 09BTFPK1482H1ZK
 FSSAI License No: 22727411000024
 Contact: 9358251328
 
-2. DELIVERY AREA
-We currently deliver ONLY within Aligarh city. Orders from outside Aligarh will not be processed.
+2. PICKUP ONLY
+We offer PICKUP ONLY service. Customers must come to the shop to collect their orders. Mahavir Ganj, Aligarh.
 
 3. PRODUCT QUALITY
-All products are of high quality. We sell only genuine branded and unbranded products with proper certification.
+All products are of high quality. We sell only genuine branded and unbranded products. All products are 100% vegetarian.
 
 4. RETURNS & REFUNDS
-Damaged or wrong items can be returned within 24 hours of delivery. Contact us on WhatsApp: 9358251328.
+Damaged or wrong items can be returned within 24 hours of purchase. Contact us on WhatsApp: 9358251328.
 
 5. PRICING
 All prices include applicable taxes. Prices may change without prior notice.
 
 6. ORDERS
-Orders are confirmed via WhatsApp. Delivery time may vary based on location within Aligarh.
+Orders are confirmed via WhatsApp. Customer must come to shop to collect.
 
 7. PRIVACY
-Your personal information (name, phone, address) is used only for order processing and delivery. We do not share your data with third parties.
+Your personal information (name, phone, address) is used only for order processing. We do not share your data with third parties.
 
 8. BY CREATING AN ACCOUNT
-You agree to all terms above and confirm that you reside in or are ordering for delivery within Aligarh, UP.`;
+You agree to all terms above.`;
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -57,159 +57,246 @@ export default function SignUp() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!termsAccepted) {
-      toast.error("Please accept the terms and conditions");
+      toast.error("Please accept terms and conditions");
       return;
     }
     if (form.password !== form.confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
-    setLoading(true);
-    try {
-      const users = JSON.parse(localStorage.getItem("ncrt_users") || "[]");
-      if (users.find((u: { email: string }) => u.email === form.email)) {
-        toast.error("Email already registered");
-        setLoading(false);
-        return;
-      }
-      const user = { ...form, id: Date.now().toString() };
-      users.push(user);
-      localStorage.setItem("ncrt_users", JSON.stringify(users));
-      localStorage.setItem("ncrt_user", JSON.stringify(user));
-      navigate("/home");
-    } catch {
-      toast.error("Registration failed");
-      setLoading(false);
+    if (form.phone.length < 10) {
+      toast.error("Enter a valid phone number");
+      return;
     }
+    setLoading(true);
+    const users = JSON.parse(localStorage.getItem("ncrt_users") || "[]");
+    if (users.find((u: { email: string }) => u.email === form.email)) {
+      toast.error("Email already registered");
+      setLoading(false);
+      return;
+    }
+    const newUser = { ...form, id: Date.now().toString() };
+    users.push(newUser);
+    localStorage.setItem("ncrt_users", JSON.stringify(users));
+    localStorage.setItem("ncrt_user", JSON.stringify(newUser));
+    toast.success("Account created!");
+    navigate("/home");
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-white">
-      <div className="px-6 py-8">
-        <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-3">
-            <span className="text-2xl">🛒</span>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-white flex flex-col">
+      <div className="flex-1 flex flex-col items-center justify-start px-6 py-8">
+        <div className="w-full max-w-sm">
+          <div className="text-center mb-6">
+            <img
+              src="/assets/uploads/WhatsApp-Image-2026-03-15-at-3.53.33-PM-2.jpeg"
+              alt="NEW C.R. TRADERS"
+              className="w-24 h-24 rounded-full object-cover mx-auto mb-3 border-4 border-green-600 shadow-lg"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = "none";
+              }}
+            />
+            <h1 className="text-xl font-bold text-green-800">
+              NEW C.R. TRADERS
+            </h1>
+            <p className="text-xs text-gray-500">Create your account</p>
           </div>
-          <h1 className="text-xl font-bold text-green-800">Create Account</h1>
-          <p className="text-sm text-gray-500">NEW C.R. TRADERS</p>
-        </div>
-        <form onSubmit={handleSubmit} className="space-y-3">
-          {[
-            {
-              key: "fullName",
-              label: "Full Name",
-              type: "text",
-              placeholder: "Your full name",
-            },
-            {
-              key: "email",
-              label: "Email",
-              type: "email",
-              placeholder: "your@email.com",
-            },
-            {
-              key: "phone",
-              label: "Phone Number",
-              type: "tel",
-              placeholder: "10-digit mobile number",
-            },
-            {
-              key: "address",
-              label: "Address",
-              type: "text",
-              placeholder: "Street / Mohalla",
-            },
-            {
-              key: "city",
-              label: "City",
-              type: "text",
-              placeholder: "City (e.g. Aligarh)",
-            },
-            {
-              key: "state",
-              label: "State",
-              type: "text",
-              placeholder: "State (e.g. Uttar Pradesh)",
-            },
-            {
-              key: "password",
-              label: "Password",
-              type: "password",
-              placeholder: "Create password",
-            },
-            {
-              key: "confirmPassword",
-              label: "Confirm Password",
-              type: "password",
-              placeholder: "Repeat password",
-            },
-          ].map((field) => (
-            <div key={field.key}>
-              <label className="block text-xs font-medium text-gray-700 mb-1">
-                {field.label}
+
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <div>
+              <label
+                htmlFor="su-fullname"
+                className="block text-xs font-medium text-gray-700 mb-1"
+              >
+                Full Name *
               </label>
               <input
-                data-ocid={`signup.${field.key}_input`}
-                type={field.type}
+                id="su-fullname"
+                data-ocid="signup.input"
+                type="text"
                 required
-                value={form[field.key as keyof typeof form]}
-                onChange={(e) =>
-                  setForm((prev) => ({ ...prev, [field.key]: e.target.value }))
-                }
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-                placeholder={field.placeholder}
+                value={form.fullName}
+                onChange={(e) => setForm({ ...form, fullName: e.target.value })}
+                className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-green-500"
+                placeholder="Your full name"
               />
             </div>
-          ))}
-          <div className="mt-4">
-            <label className="block text-xs font-medium text-gray-700 mb-2">
-              Terms & Conditions (please read completely)
-            </label>
-            <textarea
-              data-ocid="signup.terms_textarea"
-              readOnly
-              value={TERMS}
-              onScroll={handleScroll}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-xs h-32 resize-none focus:outline-none bg-gray-50"
-            />
-            {!termsRead && (
-              <p className="text-xs text-orange-500 mt-1">
-                Please scroll to the bottom to read all terms
+            <div>
+              <label
+                htmlFor="su-email"
+                className="block text-xs font-medium text-gray-700 mb-1"
+              >
+                Email *
+              </label>
+              <input
+                id="su-email"
+                data-ocid="signup.input"
+                type="email"
+                required
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-green-500"
+                placeholder="your@email.com"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="su-phone"
+                className="block text-xs font-medium text-gray-700 mb-1"
+              >
+                Phone Number *
+              </label>
+              <input
+                id="su-phone"
+                data-ocid="signup.input"
+                type="tel"
+                required
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-green-500"
+                placeholder="10-digit mobile number"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="su-address"
+                className="block text-xs font-medium text-gray-700 mb-1"
+              >
+                Address
+              </label>
+              <input
+                id="su-address"
+                data-ocid="signup.input"
+                type="text"
+                value={form.address}
+                onChange={(e) => setForm({ ...form, address: e.target.value })}
+                className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-green-500"
+                placeholder="Street address"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label
+                  htmlFor="su-city"
+                  className="block text-xs font-medium text-gray-700 mb-1"
+                >
+                  City
+                </label>
+                <input
+                  id="su-city"
+                  data-ocid="signup.input"
+                  type="text"
+                  value={form.city}
+                  onChange={(e) => setForm({ ...form, city: e.target.value })}
+                  className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-green-500"
+                  placeholder="Aligarh"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="su-state"
+                  className="block text-xs font-medium text-gray-700 mb-1"
+                >
+                  State
+                </label>
+                <input
+                  id="su-state"
+                  data-ocid="signup.input"
+                  type="text"
+                  value={form.state}
+                  onChange={(e) => setForm({ ...form, state: e.target.value })}
+                  className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-green-500"
+                  placeholder="UP"
+                />
+              </div>
+            </div>
+            <div>
+              <label
+                htmlFor="su-password"
+                className="block text-xs font-medium text-gray-700 mb-1"
+              >
+                Password *
+              </label>
+              <input
+                id="su-password"
+                data-ocid="signup.input"
+                type="password"
+                required
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-green-500"
+                placeholder="Create password"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="su-confirm"
+                className="block text-xs font-medium text-gray-700 mb-1"
+              >
+                Confirm Password *
+              </label>
+              <input
+                id="su-confirm"
+                data-ocid="signup.input"
+                type="password"
+                required
+                value={form.confirmPassword}
+                onChange={(e) =>
+                  setForm({ ...form, confirmPassword: e.target.value })
+                }
+                className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-green-500"
+                placeholder="Repeat password"
+              />
+            </div>
+
+            <div>
+              <p className="text-xs font-medium text-gray-700 mb-1">
+                Terms &amp; Conditions *
               </p>
-            )}
-          </div>
-          <label className="flex items-start gap-2 cursor-pointer">
-            <input
-              data-ocid="signup.terms_checkbox"
-              type="checkbox"
-              disabled={!termsRead}
-              checked={termsAccepted}
-              onChange={(e) => setTermsAccepted(e.target.checked)}
-              className="mt-0.5 accent-green-600"
-            />
-            <span className="text-xs text-gray-600">
-              I have read and agree to the Terms & Conditions
-            </span>
-          </label>
-          <button
-            data-ocid="signup.submit_button"
-            type="submit"
-            disabled={loading || !termsAccepted}
-            className="w-full bg-green-600 text-white rounded-lg py-3 font-semibold text-sm hover:bg-green-700 transition disabled:opacity-50 mt-2"
-          >
-            {loading ? "Creating account..." : "Create Account"}
-          </button>
-        </form>
-        <p className="text-center text-sm text-gray-500 mt-4">
-          Already have an account?{" "}
-          <Link
-            data-ocid="signup.signin_link"
-            to="/signin"
-            className="text-green-600 font-semibold"
-          >
-            Sign In
-          </Link>
-        </p>
+              <textarea
+                data-ocid="signup.textarea"
+                readOnly
+                value={TERMS}
+                onScroll={handleScroll}
+                rows={5}
+                className="w-full border border-gray-300 rounded-xl px-3 py-2 text-xs text-gray-600 resize-none bg-gray-50"
+              />
+              <label className="flex items-center gap-2 mt-2 cursor-pointer">
+                <input
+                  data-ocid="signup.checkbox"
+                  type="checkbox"
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                  disabled={!termsRead}
+                  className="w-4 h-4 accent-green-600"
+                />
+                <span className="text-xs text-gray-600">
+                  I have read and agree to the Terms &amp; Conditions
+                </span>
+              </label>
+            </div>
+
+            <button
+              type="submit"
+              data-ocid="signup.submit_button"
+              disabled={loading || !termsAccepted}
+              className="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold text-sm disabled:opacity-60"
+            >
+              {loading ? "Creating Account..." : "Create Account"}
+            </button>
+          </form>
+
+          <p className="text-center text-sm text-gray-500 mt-4">
+            Already have an account?{" "}
+            <Link
+              to="/signin"
+              data-ocid="signup.link"
+              className="text-green-600 font-semibold"
+            >
+              Sign In
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

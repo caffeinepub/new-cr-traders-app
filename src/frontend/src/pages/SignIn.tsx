@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Link, useNavigate } from "../lib/router";
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -30,9 +30,14 @@ export default function SignIn() {
       <div className="flex-1 flex flex-col items-center justify-center px-6 py-12">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
-            <div className="w-20 h-20 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl">🛒</span>
-            </div>
+            <img
+              src="/assets/uploads/WhatsApp-Image-2026-03-15-at-3.53.33-PM-2.jpeg"
+              alt="NEW C.R. TRADERS"
+              className="w-28 h-28 rounded-full object-cover mx-auto mb-4 border-4 border-green-600 shadow-lg"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = "none";
+              }}
+            />
             <h1 className="text-2xl font-bold text-green-800">
               NEW C.R. TRADERS
             </h1>
@@ -41,52 +46,69 @@ export default function SignIn() {
             </p>
             <p className="text-xs text-gray-400 mt-1">Mahavir Ganj, Aligarh</p>
           </div>
+
           <form onSubmit={handleSignIn} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="signin-email"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Email
               </label>
               <input
+                id="signin-email"
                 data-ocid="signin.input"
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500"
                 placeholder="Enter your email"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="signin-password"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Password
               </label>
               <input
-                data-ocid="signin.password_input"
+                id="signin-password"
+                data-ocid="signin.input"
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500"
                 placeholder="Enter your password"
               />
             </div>
             <button
-              data-ocid="signin.submit_button"
               type="submit"
+              data-ocid="signin.submit_button"
               disabled={loading}
-              className="w-full bg-green-600 text-white rounded-lg py-3 font-semibold text-sm hover:bg-green-700 transition disabled:opacity-60"
+              className="w-full bg-green-600 text-white py-3.5 rounded-xl font-bold text-sm disabled:opacity-60"
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>
+
           <p className="text-center text-sm text-gray-500 mt-6">
             New customer?{" "}
             <Link
-              data-ocid="signin.signup_link"
               to="/signup"
+              data-ocid="signin.link"
               className="text-green-600 font-semibold"
             >
               Create Account
+            </Link>
+          </p>
+
+          <p className="text-center text-xs text-gray-400 mt-3">
+            Admin?{" "}
+            <Link to="/admin-login" className="text-gray-500 underline">
+              Admin Login
             </Link>
           </p>
         </div>

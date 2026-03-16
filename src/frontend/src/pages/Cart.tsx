@@ -1,15 +1,15 @@
 import { ArrowLeft, Minus, Plus, Trash2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import BottomNav from "../components/BottomNav";
 import { useApp } from "../contexts/AppContext";
+import { useNavigate } from "../lib/router";
 
 export default function Cart() {
   const navigate = useNavigate();
   const { cart, updateQuantity, removeFromCart, cartTotal } = useApp();
 
   return (
-    <div className="pb-32">
-      <div className="bg-green-600 px-4 pt-10 pb-4 flex items-center gap-3">
+    <div className="pb-32 bg-gray-50 min-h-screen">
+      <div className="bg-green-700 px-4 pt-10 pb-4 flex items-center gap-3">
         <button
           type="button"
           data-ocid="cart.back_button"
@@ -18,6 +18,18 @@ export default function Cart() {
           <ArrowLeft className="text-white" size={20} />
         </button>
         <h1 className="text-white font-bold text-lg">My Cart</h1>
+      </div>
+
+      {/* Pickup Notice */}
+      <div className="mx-4 mt-3 bg-amber-50 border border-amber-300 rounded-xl px-3 py-2.5 flex items-start gap-2">
+        <span className="text-base">🏪</span>
+        <div>
+          <p className="text-amber-800 font-semibold text-xs">Pickup Only</p>
+          <p className="text-amber-700 text-xs mt-0.5">
+            Please come to our shop to collect your order. Mahavir Ganj, Aligarh
+            – 9358251328
+          </p>
+        </div>
       </div>
 
       {cart.length === 0 ? (
@@ -29,7 +41,7 @@ export default function Cart() {
           <p className="text-gray-500 mt-4 text-sm">Your cart is empty</p>
           <button
             type="button"
-            data-ocid="cart.shop_button"
+            data-ocid="cart.primary_button"
             onClick={() => navigate("/home")}
             className="mt-4 bg-green-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold"
           >
@@ -73,22 +85,24 @@ export default function Cart() {
                   <div className="flex items-center gap-2 bg-gray-100 rounded-lg px-2 py-1">
                     <button
                       type="button"
-                      data-ocid={`cart.item.${idx + 1}.decrease_button`}
+                      data-ocid={`cart.item.${idx + 1}.secondary_button`}
                       onClick={() =>
                         updateQuantity(item.productId, item.quantity - 1)
                       }
+                      className="text-gray-600"
                     >
                       <Minus size={12} />
                     </button>
-                    <span className="text-xs font-semibold w-4 text-center">
+                    <span className="text-sm font-bold w-4 text-center">
                       {item.quantity}
                     </span>
                     <button
                       type="button"
-                      data-ocid={`cart.item.${idx + 1}.increase_button`}
+                      data-ocid={`cart.item.${idx + 1}.primary_button`}
                       onClick={() =>
                         updateQuantity(item.productId, item.quantity + 1)
                       }
+                      className="text-gray-600"
                     >
                       <Plus size={12} />
                     </button>
@@ -98,32 +112,34 @@ export default function Cart() {
             ))}
           </div>
 
-          <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-md px-4">
-            <div className="bg-white rounded-2xl shadow-lg p-4">
-              <div className="flex justify-between text-sm mb-1">
-                <span className="text-gray-600">Subtotal</span>
-                <span className="font-semibold">₹{cartTotal.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between text-sm mb-3">
-                <span className="text-gray-600">Delivery</span>
-                <span className="text-green-600 font-semibold">FREE</span>
-              </div>
-              <div className="flex justify-between font-bold mb-4">
-                <span>Total</span>
-                <span className="text-green-700">₹{cartTotal.toFixed(2)}</span>
-              </div>
-              <button
-                type="button"
-                data-ocid="cart.checkout_button"
-                onClick={() => navigate("/checkout")}
-                className="w-full bg-green-600 text-white py-3 rounded-xl font-semibold"
-              >
-                Proceed to Checkout
-              </button>
+          <div className="mx-4 mt-4 bg-white rounded-2xl shadow-sm p-4">
+            <div className="flex justify-between text-sm text-gray-600">
+              <span>Subtotal</span>
+              <span>₹{cartTotal.toFixed(2)}</span>
             </div>
+            <div className="flex justify-between text-sm text-gray-600 mt-1">
+              <span>Delivery</span>
+              <span className="text-green-600 font-medium">Pickup only</span>
+            </div>
+            <div className="border-t mt-2 pt-2 flex justify-between font-bold">
+              <span>Total</span>
+              <span className="text-green-700">₹{cartTotal.toFixed(2)}</span>
+            </div>
+          </div>
+
+          <div className="fixed bottom-20 left-0 right-0 px-4">
+            <button
+              type="button"
+              data-ocid="cart.submit_button"
+              onClick={() => navigate("/checkout")}
+              className="w-full bg-green-600 text-white py-3.5 rounded-2xl font-bold text-sm shadow-lg"
+            >
+              Place Order via WhatsApp
+            </button>
           </div>
         </>
       )}
+
       <BottomNav />
     </div>
   );

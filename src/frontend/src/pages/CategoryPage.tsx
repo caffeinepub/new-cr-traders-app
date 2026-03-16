@@ -1,32 +1,24 @@
 import { ArrowLeft } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import BottomNav from "../components/BottomNav";
 import ChatBot from "../components/ChatBot";
 import { useApp } from "../contexts/AppContext";
-import { DEFAULT_CATEGORIES, DEFAULT_PRODUCTS } from "./Home";
+import { CATEGORIES, PRODUCTS } from "../data/products";
+import { useNavigate, useParams } from "../lib/router";
 
 export default function CategoryPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { addToCart } = useApp();
 
-  const categories = JSON.parse(
-    localStorage.getItem("ncrt_categories") ||
-      JSON.stringify(DEFAULT_CATEGORIES),
-  );
-  const products = JSON.parse(
-    localStorage.getItem("ncrt_products") || JSON.stringify(DEFAULT_PRODUCTS),
-  );
-  const category = categories.find((c: { id: string }) => c.id === id);
-  const categoryProducts = products.filter(
-    (p: { categoryId: string; isAvailable: boolean }) =>
-      p.categoryId === id && p.isAvailable,
+  const category = CATEGORIES.find((c) => c.id === id);
+  const categoryProducts = PRODUCTS.filter(
+    (p) => p.categoryId === id && p.isAvailable,
   );
 
   return (
-    <div className="pb-20">
-      <div className="bg-green-600 px-4 pt-10 pb-4 flex items-center gap-3">
+    <div className="pb-20 bg-gray-50 min-h-screen">
+      <div className="bg-green-700 px-4 pt-10 pb-4 flex items-center gap-3">
         <button
           type="button"
           data-ocid="category.back_button"
@@ -38,6 +30,7 @@ export default function CategoryPage() {
           {category?.emoji} {category?.name || "Products"}
         </h1>
       </div>
+
       <div className="px-4 mt-4 grid grid-cols-2 gap-3">
         {categoryProducts.length === 0 ? (
           <div
@@ -48,77 +41,89 @@ export default function CategoryPage() {
             <p className="text-sm">No products in this category</p>
           </div>
         ) : (
-          categoryProducts.map(
-            (p: {
-              id: string;
-              imageUrl: string;
-              name: string;
-              size: string;
-              price: string;
-              mrp?: string;
-              isPacked: boolean;
-            }) => (
-              <div
-                key={p.id}
-                data-ocid={`category.product.${p.id}.card`}
-                onClick={() => navigate(`/product/${p.id}`)}
-                className="bg-white rounded-2xl shadow-sm overflow-hidden cursor-pointer"
-              >
-                <img
-                  src={p.imageUrl}
-                  alt={p.name}
-                  className="w-full h-32 object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src =
-                      "https://images.unsplash.com/photo-1542838132-92c53300491e?w=300";
-                  }}
-                />
-                <div className="p-3">
-                  <p className="font-semibold text-sm text-gray-800 truncate">
+          categoryProducts.map((p, idx) => (
+            <button
+              key={p.id}
+              type="button"
+              data-ocid={`category.item.${idx + 1}`}
+              onClick={() => navigate(`/product/${p.id}`)}
+              className="bg-white rounded-2xl shadow-sm overflow-hidden text-left hover:shadow-md transition-shadow"
+            >
+              <div className="relative">
+                {p.imageUrl ? (
+                  <img
+                    src={p.imageUrl}
+                    alt={p.name}
+                    className="w-full h-32 object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = "none";
+                      const parent = (e.target as HTMLImageElement)
+                        .parentElement;
+                      if (parent) {
+                        const ph = document.createElement("div");
+                        ph.className =
+                          "w-full h-32 bg-gray-100 flex items-center justify-center text-4xl";
+                        ph.textContent = category?.emoji ?? p.name.charAt(0);
+                        parent.insertBefore(ph, e.target as HTMLImageElement);
+                      }
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-32 bg-gray-100 flex items-center justify-center text-4xl select-none">
+                    {category?.emoji ?? p.name.charAt(0)}
+                  </div>
+                )}
+                <span
+                  className={`absolute top-2 right-2 text-white text-xs px-1.5 py-0.5 rounded-full font-medium ${
+                    p.isPacked ? "bg-blue-500" : "bg-orange-500"
+                  }`}
+                >
+                  {p.isPacked ? "Packed" : "Unpacked"}
+                </span>
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-2 py-1.5">
+                  <p className="text-white text-xs font-semibold leading-tight line-clamp-2">
                     {p.name}
                   </p>
-                  <p className="text-xs text-gray-500">
-                    {p.size} · {p.isPacked ? "Packed" : "Unpacked"}
-                  </p>
-                  <div className="flex items-center justify-between mt-2">
-                    <div>
-                      <span className="text-green-700 font-bold text-sm">
-                        ₹{p.price}
-                      </span>
-                      {p.mrp && (
-                        <span className="text-gray-400 text-xs line-through ml-1">
-                          ₹{p.mrp}
-                        </span>
-                      )}
-                    </div>
-                    <button
-                      type="button"
-                      data-ocid={`category.product.${p.id}.add_button`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        addToCart({
-                          productId: p.id,
-                          name: p.name,
-                          price: Number.parseFloat(p.price),
-                          imageUrl: p.imageUrl,
-                          quantity: 1,
-                          size: p.size,
-                        });
-                        toast.success(`${p.name} added to cart`);
-                      }}
-                      className="bg-green-600 text-white text-xs px-2 py-1 rounded-lg"
-                    >
-                      Add
-                    </button>
-                  </div>
                 </div>
               </div>
-            ),
-          )
+              <div className="p-2">
+                <p className="font-semibold text-xs text-gray-800 line-clamp-2 leading-tight">
+                  {p.name}
+                </p>
+                <p className="text-gray-500 text-xs mt-0.5">{p.size}</p>
+                {p.brand && (
+                  <p className="text-blue-600 text-xs mt-0.5">{p.brand}</p>
+                )}
+                <div className="flex items-center justify-between mt-1">
+                  <p className="text-green-700 font-bold text-sm">₹{p.price}</p>
+                  <button
+                    type="button"
+                    data-ocid={`category.item.${idx + 1}.button`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addToCart({
+                        productId: p.id,
+                        name: p.name,
+                        price: p.price,
+                        imageUrl: p.imageUrl,
+                        quantity: 1,
+                        size: p.size,
+                      });
+                      toast.success(`${p.name} added to cart`);
+                    }}
+                    className="bg-green-600 text-white text-xs px-2 py-1 rounded-lg"
+                  >
+                    + Add
+                  </button>
+                </div>
+              </div>
+            </button>
+          ))
         )}
       </div>
-      <ChatBot />
+
       <BottomNav />
+      <ChatBot />
     </div>
   );
 }

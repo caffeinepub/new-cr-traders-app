@@ -1,7 +1,7 @@
 import { LogOut, Pencil, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useNavigate } from "../lib/router";
 import { DEFAULT_CATEGORIES, DEFAULT_PRODUCTS } from "./Home";
 
 interface Product {

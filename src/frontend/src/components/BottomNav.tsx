@@ -1,6 +1,6 @@
 import { Home, Package, RefreshCw, Settings, ShoppingCart } from "lucide-react";
-import { useLocation, useNavigate } from "react-router-dom";
 import { useApp } from "../contexts/AppContext";
+import { useLocation, useNavigate } from "../lib/router";
 
 const tabs = [
   { path: "/home", icon: Home, label: "Home" },
@@ -17,13 +17,13 @@ export default function BottomNav() {
 
   return (
     <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-100 flex shadow-lg z-40">
-      {tabs.map((tab, i) => {
+      {tabs.map((tab) => {
         const isActive = location.pathname === tab.path;
         const Icon = tab.icon;
         return (
           <button
             type="button"
-            key={i}
+            key={tab.label}
             data-ocid={`nav.${tab.label.toLowerCase().replace(" ", "_")}.button`}
             onClick={() => navigate(tab.path)}
             className={`flex-1 flex flex-col items-center py-2.5 gap-0.5 transition ${isActive ? "text-green-600" : "text-gray-400"}`}

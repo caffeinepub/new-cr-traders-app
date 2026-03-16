@@ -1,27 +1,26 @@
 import { ArrowLeft, Minus, Plus, ShoppingCart } from "lucide-react";
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import BottomNav from "../components/BottomNav";
 import { useApp } from "../contexts/AppContext";
-import { DEFAULT_CATEGORIES, DEFAULT_PRODUCTS } from "./Home";
+import {
+  CATEGORIES,
+  PRODUCTS,
+  UNPACKED_WEIGHTS,
+  WEIGHT_MULTIPLIER,
+} from "../data/products";
+import { useNavigate, useParams } from "../lib/router";
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { addToCart } = useApp();
   const [qty, setQty] = useState(1);
+  const [selectedWeight, setSelectedWeight] = useState("1kg");
 
-  const products = JSON.parse(
-    localStorage.getItem("ncrt_products") || JSON.stringify(DEFAULT_PRODUCTS),
-  );
-  const categories = JSON.parse(
-    localStorage.getItem("ncrt_categories") ||
-      JSON.stringify(DEFAULT_CATEGORIES),
-  );
-  const product = products.find((p: { id: string }) => p.id === id);
+  const product = PRODUCTS.find((p) => p.id === id);
   const category = product
-    ? categories.find((c: { id: string }) => c.id === product.categoryId)
+    ? CATEGORIES.find((c) => c.id === product.categoryId)
     : null;
 
   if (!product)
@@ -38,18 +37,39 @@ export default function ProductDetail() {
       </div>
     );
 
+  const calculatedPrice = product.isPacked
+    ? product.price
+    : Math.round(product.price * WEIGHT_MULTIPLIER[selectedWeight]);
+
+  const displaySize = product.isPacked ? product.size : selectedWeight;
+
+  const handleAddToCart = () => {
+    addToCart({
+      productId: `${product.id}-${displaySize}`,
+      name: product.name,
+      price: calculatedPrice,
+      imageUrl: product.imageUrl,
+      quantity: qty,
+      size: displaySize,
+    });
+    toast.success(`${product.name} added to cart!`);
+  };
+
   return (
-    <div className="pb-32">
+    <div className="pb-32 bg-gray-50 min-h-screen">
       <div className="relative">
-        <img
-          src={product.imageUrl}
-          alt={product.name}
-          className="w-full h-64 object-cover"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src =
-              "https://images.unsplash.com/photo-1542838132-92c53300491e?w=400";
-          }}
-        />
+        {product.imageUrl ? (
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="w-full h-64 object-cover"
+          />
+        ) : (
+          <div className="w-full h-64 bg-gray-100 flex items-center justify-center text-6xl select-none">
+            {CATEGORIES.find((c) => c.id === product.categoryId)?.emoji ??
+              product.name.charAt(0)}
+          </div>
+        )}
         <button
           type="button"
           data-ocid="product.back_button"
@@ -59,92 +79,122 @@ export default function ProductDetail() {
           <ArrowLeft size={18} className="text-gray-700" />
         </button>
       </div>
-      <div className="px-4 py-4">
+
+      <div className="px-4 py-4 bg-white mx-0">
         <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-xl font-bold text-gray-800">{product.name}</h1>
-            {category && (
-              <p className="text-xs text-green-600 mt-0.5">
-                {category.emoji} {category.name}
+          <div className="flex-1">
+            <p className="text-xs text-gray-500">
+              {category?.emoji} {category?.name}
+            </p>
+            <h1 className="text-lg font-bold text-gray-900 mt-0.5">
+              {product.name}
+            </h1>
+            {product.brand && (
+              <p className="text-blue-600 text-sm font-medium">
+                {product.brand}
               </p>
             )}
           </div>
           <span
-            className={`text-xs px-2 py-1 rounded-full font-medium ${product.isPacked ? "bg-blue-100 text-blue-700" : "bg-orange-100 text-orange-700"}`}
+            className={`text-white text-xs px-2 py-1 rounded-full font-medium ${
+              product.isPacked ? "bg-blue-500" : "bg-orange-500"
+            }`}
           >
             {product.isPacked ? "Packed" : "Unpacked"}
           </span>
         </div>
-        <p className="text-gray-500 text-sm mt-1">{product.size}</p>
-        {product.brand && (
-          <p className="text-xs text-gray-400 mt-0.5">Brand: {product.brand}</p>
+
+        <p className="text-gray-600 text-sm mt-2">{product.description}</p>
+
+        {/* Weight Selector for Unpacked Items */}
+        {!product.isPacked && (
+          <div className="mt-4">
+            <p className="text-sm font-semibold text-gray-700 mb-2">
+              Select Weight:
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {UNPACKED_WEIGHTS.map((w) => (
+                <button
+                  key={w}
+                  type="button"
+                  data-ocid="product.toggle"
+                  onClick={() => setSelectedWeight(w)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+                    selectedWeight === w
+                      ? "bg-green-600 text-white border-green-600"
+                      : "bg-white text-gray-700 border-gray-300"
+                  }`}
+                >
+                  {w}
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              Base price: ₹{product.price}/kg
+            </p>
+          </div>
         )}
-        <div className="flex items-center gap-3 mt-3">
+
+        {/* Price */}
+        <div className="mt-4 flex items-center gap-2">
           <span className="text-2xl font-bold text-green-700">
-            ₹{product.price}
+            ₹{calculatedPrice}
           </span>
-          {product.mrp && product.mrp !== product.price && (
-            <span className="text-gray-400 text-lg line-through">
-              ₹{product.mrp}
-            </span>
-          )}
-          {product.mrp && product.mrp !== product.price && (
-            <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full">
-              Save ₹
-              {(
-                Number.parseFloat(product.mrp) -
-                Number.parseFloat(product.price)
-              ).toFixed(0)}
-            </span>
-          )}
+          <span className="text-gray-500 text-sm">for {displaySize}</span>
         </div>
-        <div className="mt-4 p-3 bg-gray-50 rounded-xl">
-          <p className="text-xs font-semibold text-gray-600 mb-1">
-            Description
+
+        {/* Pickup Notice */}
+        <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 flex items-center gap-2">
+          <span>🏪</span>
+          <p className="text-amber-800 text-xs">
+            Pickup from shop — Mahavir Ganj, Aligarh
           </p>
-          <p className="text-sm text-gray-600">{product.description}</p>
         </div>
-        <div className="mt-4 flex items-center justify-between">
-          <div className="flex items-center gap-3 bg-gray-100 rounded-xl px-3 py-2">
+
+        {/* Quantity Selector */}
+        <div className="mt-4 flex items-center gap-4">
+          <p className="text-sm font-semibold text-gray-700">Quantity:</p>
+          <div className="flex items-center gap-3 bg-gray-100 rounded-xl px-3 py-1">
             <button
               type="button"
-              data-ocid="product.decrease_button"
-              onClick={() => setQty((q) => Math.max(1, q - 1))}
-              className="text-green-700"
+              data-ocid="product.secondary_button"
+              onClick={() => setQty(Math.max(1, qty - 1))}
             >
-              <Minus size={16} />
+              <Minus size={16} className="text-gray-700" />
             </button>
-            <span className="font-semibold w-6 text-center">{qty}</span>
+            <span className="font-bold text-gray-900 w-6 text-center">
+              {qty}
+            </span>
             <button
               type="button"
-              data-ocid="product.increase_button"
-              onClick={() => setQty((q) => q + 1)}
-              className="text-green-700"
+              data-ocid="product.primary_button"
+              onClick={() => setQty(qty + 1)}
             >
-              <Plus size={16} />
+              <Plus size={16} className="text-gray-700" />
             </button>
           </div>
-          <button
-            type="button"
-            data-ocid="product.add_to_cart_button"
-            onClick={() => {
-              addToCart({
-                productId: product.id,
-                name: product.name,
-                price: Number.parseFloat(product.price),
-                imageUrl: product.imageUrl,
-                quantity: qty,
-                size: product.size,
-              });
-              toast.success(`${product.name} added to cart`);
-              navigate("/cart");
-            }}
-            className="flex-1 ml-3 bg-green-600 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2"
-          >
-            <ShoppingCart size={18} /> Add to Cart
-          </button>
+          <p className="text-sm text-gray-600">
+            Total:{" "}
+            <span className="font-bold text-green-700">
+              ₹{calculatedPrice * qty}
+            </span>
+          </p>
         </div>
       </div>
+
+      {/* Add to Cart Button */}
+      <div className="fixed bottom-20 left-0 right-0 px-4">
+        <button
+          type="button"
+          data-ocid="product.submit_button"
+          onClick={handleAddToCart}
+          className="w-full bg-green-600 text-white py-3.5 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg"
+        >
+          <ShoppingCart size={18} />
+          Add to Cart — ₹{calculatedPrice * qty}
+        </button>
+      </div>
+
       <BottomNav />
     </div>
   );

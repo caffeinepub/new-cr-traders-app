@@ -1,8 +1,8 @@
 import { ArrowLeft, RotateCcw } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import BottomNav from "../components/BottomNav";
 import { useApp } from "../contexts/AppContext";
+import { useNavigate } from "../lib/router";
 
 interface OrderItem {
   productId: string;
@@ -41,7 +41,7 @@ export default function Orders() {
   const buyAgain = (order: Order) => {
     try {
       const items: OrderItem[] = JSON.parse(order.items);
-      items.forEach((i) => addToCart(i));
+      for (const i of items) addToCart(i);
       toast.success("Items added to cart");
       navigate("/cart");
     } catch {
@@ -71,7 +71,7 @@ export default function Orders() {
           <p className="text-gray-500 mt-4 text-sm">No orders yet</p>
           <button
             type="button"
-            data-ocid="orders.shop_button"
+            data-ocid="orders.primary_button"
             onClick={() => navigate("/home")}
             className="mt-4 bg-green-600 text-white px-6 py-2.5 rounded-xl text-sm font-semibold"
           >
@@ -122,7 +122,7 @@ export default function Orders() {
                   </span>
                   <button
                     type="button"
-                    data-ocid={`orders.item.${idx + 1}.buy_again_button`}
+                    data-ocid={`orders.item.${idx + 1}.button`}
                     onClick={() => buyAgain(order)}
                     className="flex items-center gap-1 bg-green-50 text-green-700 text-xs px-3 py-1.5 rounded-lg font-medium"
                   >

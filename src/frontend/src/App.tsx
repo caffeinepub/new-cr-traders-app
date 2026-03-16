@@ -1,6 +1,6 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster } from "./components/ui/sonner";
 import { AppProvider } from "./contexts/AppContext";
+import { BrowserRouter, Navigate, Route, Routes } from "./lib/router";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLogin from "./pages/AdminLogin";
 import Cart from "./pages/Cart";

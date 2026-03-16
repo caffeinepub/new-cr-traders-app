@@ -1,8 +1,8 @@
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useApp } from "../contexts/AppContext";
+import { useNavigate } from "../lib/router";
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -10,13 +10,7 @@ export default function Checkout() {
   const user = JSON.parse(localStorage.getItem("ncrt_user") || "{}");
   const [loading, setLoading] = useState(false);
 
-  const isAligarh = (user.city || "").toLowerCase().includes("aligarh");
-
   const placeOrder = async () => {
-    if (!isAligarh) {
-      toast.error("Delivery not available outside Aligarh");
-      return;
-    }
     setLoading(true);
     try {
       const order = {
@@ -24,7 +18,7 @@ export default function Checkout() {
         customerId: user.id || "guest",
         customerName: user.fullName || "",
         customerPhone: user.phone || "",
-        deliveryAddress: `${user.address}, ${user.city}, ${user.state}`,
+        deliveryAddress: `${user.address || ""}, ${user.city || "Aligarh"}, ${user.state || "UP"}`,
         items: JSON.stringify(cart),
         totalAmount: cartTotal.toFixed(2),
         status: "confirmed",
@@ -34,9 +28,14 @@ export default function Checkout() {
       orders.unshift(order);
       localStorage.setItem("ncrt_orders", JSON.stringify(orders));
 
-      const itemsText = cart.map((i) => `${i.name} x${i.quantity}`).join(", ");
+      const itemsText = cart
+        .map(
+          (i) =>
+            `${i.name} (${i.size}) x${i.quantity} = \u20b9${i.price * i.quantity}`,
+        )
+        .join("\n");
       const waText = encodeURIComponent(
-        `🛒 *New Order from NEW C.R. TRADERS App*\n\n👤 Customer: ${user.fullName}\n📞 Phone: ${user.phone}\n📍 Address: ${order.deliveryAddress}\n\n📦 Items: ${itemsText}\n\n💰 Total: ₹${cartTotal.toFixed(2)}\n\n#OrderID: ${order.id}`,
+        `\ud83d\uded2 *New Order - NEW C.R. TRADERS App*\n\n\ud83d\udc64 Customer: ${user.fullName || "Guest"}\n\ud83d\udcde Phone: ${user.phone || "N/A"}\n\ud83d\udccd Pickup from shop\n\n\ud83d\udce6 Items:\n${itemsText}\n\n\ud83d\udcb0 Total: \u20b9${cartTotal.toFixed(2)}\n\n#OrderID: ${order.id}\n\n\ud83c\udfea Customer will come to shop to collect`,
       );
       window.open(`https://wa.me/919358251328?text=${waText}`, "_blank");
 
@@ -50,8 +49,8 @@ export default function Checkout() {
   };
 
   return (
-    <div className="pb-8">
-      <div className="bg-green-600 px-4 pt-10 pb-4 flex items-center gap-3">
+    <div className="pb-8 bg-gray-50 min-h-screen">
+      <div className="bg-green-700 px-4 pt-10 pb-4 flex items-center gap-3">
         <button
           type="button"
           data-ocid="checkout.back_button"
@@ -62,75 +61,68 @@ export default function Checkout() {
         <h1 className="text-white font-bold text-lg">Checkout</h1>
       </div>
 
-      <div className="px-4 mt-4 space-y-4">
-        {/* Delivery Notice */}
-        {!isAligarh && (
-          <div
-            data-ocid="checkout.unavailable_banner"
-            className="bg-red-50 border border-red-200 rounded-xl p-4"
-          >
-            <p className="text-red-700 font-semibold text-sm">
-              Currently Unavailable
-            </p>
-            <p className="text-red-600 text-xs mt-1">
-              We only deliver in Aligarh, UP. Please update your address in
-              Settings.
-            </p>
-          </div>
-        )}
+      <div className="mx-4 mt-4 bg-amber-50 border border-amber-300 rounded-xl px-4 py-3">
+        <p className="text-amber-800 font-bold text-sm">🏪 Pickup Only</p>
+        <p className="text-amber-700 text-xs mt-1">
+          Please come to our shop to collect your order.
+        </p>
+        <p className="text-amber-800 text-xs font-medium mt-1">
+          Mahavir Ganj, Muchoon Wale Hanuman Ji ke paas, Aligarh – 202001, UP
+        </p>
+        <p className="text-amber-700 text-xs mt-1">📞 9358251328</p>
+      </div>
 
-        {/* Delivery Address */}
-        <div className="bg-white rounded-2xl shadow-sm p-4">
-          <p className="font-semibold text-sm text-gray-700 mb-2">
-            📍 Delivery Address
-          </p>
-          <p className="text-sm text-gray-600">{user.fullName}</p>
-          <p className="text-sm text-gray-500">{user.address}</p>
-          <p className="text-sm text-gray-500">
-            {user.city}, {user.state}
-          </p>
-          <p className="text-sm text-gray-500">{user.phone}</p>
-        </div>
-
-        {/* Order Summary */}
-        <div className="bg-white rounded-2xl shadow-sm p-4">
-          <p className="font-semibold text-sm text-gray-700 mb-3">
-            Order Summary
-          </p>
-          {cart.map((item) => (
-            <div
-              key={item.productId}
-              className="flex justify-between text-sm py-1"
-            >
-              <span className="text-gray-600">
-                {item.name} × {item.quantity}
+      <div className="mx-4 mt-4 bg-white rounded-2xl shadow-sm p-4">
+        <h2 className="font-bold text-gray-800 text-sm mb-3">Order Summary</h2>
+        <div className="space-y-2">
+          {cart.map((item, idx) => (
+            <div key={item.productId} className="flex justify-between text-sm">
+              <span
+                className="text-gray-700"
+                data-ocid={`checkout.item.${idx + 1}`}
+              >
+                {item.name} ({item.size}) x{item.quantity}
               </span>
-              <span className="font-medium">
-                ₹{(item.price * item.quantity).toFixed(2)}
-              </span>
+              <span className="font-medium">₹{item.price * item.quantity}</span>
             </div>
           ))}
-          <div className="border-t mt-2 pt-2 flex justify-between font-bold">
-            <span>Total</span>
-            <span className="text-green-700">₹{cartTotal.toFixed(2)}</span>
-          </div>
         </div>
-
-        <div className="bg-green-50 rounded-xl p-3">
-          <p className="text-xs text-green-700">
-            Order confirmation will be sent via WhatsApp to 9358251328
-          </p>
+        <div className="border-t mt-3 pt-3 flex justify-between font-bold">
+          <span>Total</span>
+          <span className="text-green-700">₹{cartTotal.toFixed(2)}</span>
         </div>
+      </div>
 
+      {user.fullName && (
+        <div className="mx-4 mt-4 bg-white rounded-2xl shadow-sm p-4">
+          <h2 className="font-bold text-gray-800 text-sm mb-2">
+            Customer Details
+          </h2>
+          <p className="text-sm text-gray-700">{user.fullName}</p>
+          <p className="text-xs text-gray-500">{user.phone}</p>
+          {user.address && (
+            <p className="text-xs text-gray-500">
+              {user.address}, {user.city}
+            </p>
+          )}
+        </div>
+      )}
+
+      <div className="px-4 mt-6">
         <button
           type="button"
-          data-ocid="checkout.place_order_button"
+          data-ocid="checkout.submit_button"
           onClick={placeOrder}
-          disabled={loading || !isAligarh}
-          className="w-full bg-green-600 text-white py-4 rounded-xl font-bold text-base disabled:opacity-50"
+          disabled={loading || cart.length === 0}
+          className="w-full bg-green-600 text-white py-4 rounded-2xl font-bold text-sm shadow-lg disabled:opacity-50 flex items-center justify-center gap-2"
         >
-          {loading ? "Placing Order..." : "Place Order"}
+          {loading
+            ? "Placing Order..."
+            : "\ud83d\udcf1 Send Order via WhatsApp"}
         </button>
+        <p className="text-center text-xs text-gray-500 mt-2">
+          Order will be sent to 9358251328
+        </p>
       </div>
     </div>
   );

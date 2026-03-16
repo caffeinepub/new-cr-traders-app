@@ -1,7 +1,7 @@
 import { CheckCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import BottomNav from "../components/BottomNav";
 import { useApp } from "../contexts/AppContext";
+import { useNavigate } from "../lib/router";
 
 export default function OrderSuccess() {
   const navigate = useNavigate();

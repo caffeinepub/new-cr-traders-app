@@ -1,7 +1,8 @@
 import { MessageCircle, Send, X } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 interface Message {
+  id: number;
   role: "bot" | "user";
   text: string;
 }
@@ -9,45 +10,45 @@ interface Message {
 const RESPONSES: [RegExp, string][] = [
   [
     /hello|hi|namaste/i,
-    "Namaste! 🙏 Welcome to NEW C.R. TRADERS. How can I help you today?",
+    "Namaste! \u{1F64F} Welcome to NEW C.R. TRADERS. How can I help you today?",
   ],
   [
-    /dal|masale|rice|meva|dry fruit|oil|ghee|atta|flour|sugar|salt|pooja/i,
-    "We have a great collection! Visit our categories: Dal, Masale, Meva, Rice, Pooja Items, Atta & Flour, Oil & Ghee, Sugar & Salt. 🛒",
+    /dal|masale|rice|meva|dry fruit|pooja/i,
+    "We have a great collection! Visit our categories: Dal, Masale, Meva, Rice, Pooja Items, Grocery & Bakery, Goldiee Masale, and more. \ud83d\uded2",
   ],
   [
-    /deliver|delivery|area|where/i,
-    "We currently deliver ONLY within Aligarh city, Uttar Pradesh. 📍",
+    /deliver|pickup|area|where/i,
+    "We offer PICKUP ONLY. Customers must come to shop: Mahavir Ganj, Aligarh. \ud83d\udccd",
   ],
   [
     /price|rate|cost/i,
-    "Our prices are very competitive. All prices include taxes and are displayed on each product page. 💰",
+    "Our prices are very competitive. All prices are displayed on each product page. \ud83d\udcb0",
   ],
   [
     /contact|phone|number|call/i,
-    "You can reach us at: 📞 9358251328 (WhatsApp available). We're located at Mahavir Ganj, Aligarh.",
+    "You can reach us at: \ud83d\udcde 9358251328 (WhatsApp available). Mahavir Ganj, Aligarh.",
   ],
   [
     /address|location|where.*shop/i,
-    "📍 Mahavir Ganj, Muchoon Wale Hanuman Ji ke paas, Aligarh - 202001, Uttar Pradesh",
+    "\ud83d\udccd Mahavir Ganj, Muchoon Wale Hanuman Ji ke paas, Aligarh - 202001, Uttar Pradesh",
   ],
   [/gstin|gst/i, "Our GSTIN is: 09BTFPK1482H1ZK"],
   [/fssai/i, "Our FSSAI License No. is: 22727411000024"],
   [
     /return|refund/i,
-    "Damaged or wrong items can be returned within 24 hours. Contact us on WhatsApp: 9358251328 📱",
+    "Damaged or wrong items can be returned within 24 hours. Contact us on WhatsApp: 9358251328 \ud83d\udcf1",
   ],
   [
     /order|buy|purchase/i,
-    "To place an order: Browse products → Add to Cart → Checkout. Orders are confirmed via WhatsApp! ✅",
+    "To place an order: Browse products \u2192 Add to Cart \u2192 Checkout. Come to shop to collect! \u2705",
   ],
   [
     /time|hour|open|close/i,
-    "We are open from 8 AM to 10 PM, Monday to Sunday. 🕐",
+    "We are open from 8 AM to 10 PM, Monday to Sunday. \ud83d\udd50",
   ],
   [
     /thank|thanks|shukriya/i,
-    "Thank you for choosing NEW C.R. TRADERS! We're happy to serve you. 🙏",
+    "Thank you for choosing NEW C.R. TRADERS! \u{1F64F}",
   ],
 ];
 
@@ -55,15 +56,17 @@ function getResponse(msg: string): string {
   for (const [pattern, response] of RESPONSES) {
     if (pattern.test(msg)) return response;
   }
-  return "I'm not sure about that. Please call us at 9358251328 for help! 📞";
+  return "I'm not sure about that. Please call us at 9358251328 for help! \ud83d\udcde";
 }
 
 export default function ChatBot() {
+  const idRef = useRef(1);
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
+      id: 0,
       role: "bot",
-      text: "Namaste! 🙏 I'm your NEW C.R. TRADERS assistant. Ask me about products, delivery, or anything else!",
+      text: "Namaste! \u{1F64F} I'm your NEW C.R. TRADERS assistant. Ask me about products, pickup, or anything else!",
     },
   ]);
   const [input, setInput] = useState("");
@@ -72,16 +75,17 @@ export default function ChatBot() {
     if (!input.trim()) return;
     const userMsg = input.trim();
     setInput("");
+    const uid = idRef.current++;
+    const bid = idRef.current++;
     setMessages((prev) => [
       ...prev,
-      { role: "user", text: userMsg },
-      { role: "bot", text: getResponse(userMsg) },
+      { id: uid, role: "user", text: userMsg },
+      { id: bid, role: "bot", text: getResponse(userMsg) },
     ]);
   };
 
   return (
     <>
-      {/* Floating Button */}
       <button
         type="button"
         data-ocid="chatbot.open_modal_button"
@@ -91,7 +95,6 @@ export default function ChatBot() {
         <MessageCircle size={22} className="text-white" />
       </button>
 
-      {/* Chat Modal */}
       {open && (
         <div
           data-ocid="chatbot.dialog"
@@ -111,9 +114,9 @@ export default function ChatBot() {
             </button>
           </div>
           <div className="h-64 overflow-y-auto p-3 space-y-2">
-            {messages.map((m, i) => (
+            {messages.map((m) => (
               <div
-                key={i}
+                key={m.id}
                 className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
