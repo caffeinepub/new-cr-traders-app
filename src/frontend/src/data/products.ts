@@ -63,7 +63,7 @@ const gd = (id: string) =>
   `https://drive.google.com/thumbnail?id=${id}&sz=w400`;
 
 export const PRODUCTS: Product[] = [
-  // ── DAL & CHANA (links 29-46) ───────────────────────────────────────────────
+  // ── DAL & CHANA ───────────────────────────────────────────────────────────────
   {
     id: "dal-01",
     name: "Moti Wali Toor Dal",
@@ -263,12 +263,12 @@ export const PRODUCTS: Product[] = [
     isAvailable: true,
   },
 
-  // ── MASALE / SPICES (links 47-71) ───────────────────────────────────────────
+  // ── MASALE / SPICES ── (Sabut = Whole, Powder = Ground) ─────────────────────
   {
     id: "mas-01",
-    name: "Haldi Sabut",
+    name: "Haldi Sabut - Unpacked",
     categoryId: "masale",
-    description: "Whole turmeric",
+    description: "Whole turmeric - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 190,
@@ -277,9 +277,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-02",
-    name: "Lal Mirch Sabut (Without Dandi)",
+    name: "Lal Mirch Sabut (Bina Dandi) - Unpacked",
     categoryId: "masale",
-    description: "Whole red chilli without stem",
+    description: "Whole red chilli without stem - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 270,
@@ -288,9 +288,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-03",
-    name: "Lal Mirch Sabut (With Dandi)",
+    name: "Lal Mirch Sabut (With Dandi) - Unpacked",
     categoryId: "masale",
-    description: "Whole red chilli with stem",
+    description: "Whole red chilli with stem - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 230,
@@ -299,9 +299,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-04",
-    name: "Dhaniya Sabut",
+    name: "Dhaniya Sabut - Unpacked",
     categoryId: "masale",
-    description: "Whole coriander seeds",
+    description: "Whole coriander seeds - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 135,
@@ -310,9 +310,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-05",
-    name: "Khatai",
+    name: "Khatai Sabut - Unpacked",
     categoryId: "masale",
-    description: "Dry mango powder whole",
+    description: "Whole dry mango - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 140,
@@ -321,9 +321,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-06",
-    name: "Garam Masala Mix",
+    name: "Garam Masala Sabut - Unpacked",
     categoryId: "masale",
-    description: "Mixed whole spices",
+    description: "Whole garam masala spice mix - Unpacked",
     size: "100g",
     isPacked: false,
     price: 120,
@@ -332,9 +332,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-07",
-    name: "Jeera",
+    name: "Jeera Sabut - Unpacked",
     categoryId: "masale",
-    description: "Cumin seeds",
+    description: "Whole cumin seeds - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 300,
@@ -343,9 +343,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-08",
-    name: "Kali Mirch",
+    name: "Kali Mirch Sabut - Unpacked",
     categoryId: "masale",
-    description: "Black pepper whole",
+    description: "Whole black pepper - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 800,
@@ -354,9 +354,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-09",
-    name: "Laung",
+    name: "Laung Sabut - Unpacked",
     categoryId: "masale",
-    description: "Cloves whole",
+    description: "Whole cloves - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 900,
@@ -365,9 +365,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-10",
-    name: "Dalchini",
+    name: "Dalchini Sabut - Unpacked",
     categoryId: "masale",
-    description: "Cinnamon sticks",
+    description: "Whole cinnamon sticks - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 400,
@@ -376,9 +376,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-11",
-    name: "Choti Elaichi",
+    name: "Choti Elaichi Sabut - Unpacked",
     categoryId: "masale",
-    description: "Small cardamom",
+    description: "Whole green cardamom - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 3500,
@@ -387,9 +387,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-12",
-    name: "Badi Elaichi",
+    name: "Badi Elaichi Sabut - Unpacked",
     categoryId: "masale",
-    description: "Large black cardamom",
+    description: "Whole black cardamom - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 2400,
@@ -398,9 +398,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-13",
-    name: "Tej Patta",
+    name: "Tej Patta Sabut - Unpacked",
     categoryId: "masale",
-    description: "Bay leaves",
+    description: "Whole bay leaves - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 150,
@@ -409,9 +409,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-14",
-    name: "Javitri",
+    name: "Javitri Sabut - Unpacked",
     categoryId: "masale",
-    description: "Mace whole",
+    description: "Whole mace - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 2600,
@@ -420,9 +420,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-15",
-    name: "Jaiphal",
+    name: "Jaiphal Sabut - Unpacked",
     categoryId: "masale",
-    description: "Nutmeg whole",
+    description: "Whole nutmeg - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 900,
@@ -431,9 +431,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-16",
-    name: "Saunf Mumbai",
+    name: "Saunf Mumbai Sabut - Unpacked",
     categoryId: "masale",
-    description: "Fennel seeds Mumbai variety",
+    description: "Whole fennel Mumbai variety - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 220,
@@ -442,9 +442,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-17",
-    name: "Saunf Desi",
+    name: "Saunf Desi Sabut - Unpacked",
     categoryId: "masale",
-    description: "Desi fennel seeds",
+    description: "Whole desi fennel - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 140,
@@ -453,9 +453,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-18",
-    name: "Ajwain Moti",
+    name: "Ajwain Moti Sabut - Unpacked",
     categoryId: "masale",
-    description: "Carom seeds",
+    description: "Whole carom seeds - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 300,
@@ -464,9 +464,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-19",
-    name: "Rai",
+    name: "Rai Sabut - Unpacked",
     categoryId: "masale",
-    description: "Mustard seeds",
+    description: "Whole mustard seeds - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 160,
@@ -475,9 +475,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-20",
-    name: "Methi Dana",
+    name: "Methi Dana Sabut - Unpacked",
     categoryId: "masale",
-    description: "Fenugreek seeds",
+    description: "Whole fenugreek seeds - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 120,
@@ -486,9 +486,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-21",
-    name: "Kalonji",
+    name: "Kalonji Sabut - Unpacked",
     categoryId: "masale",
-    description: "Nigella seeds",
+    description: "Whole nigella seeds - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 400,
@@ -497,9 +497,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-22",
-    name: "Badiyan Phool",
+    name: "Badiyan Phool Sabut - Unpacked",
     categoryId: "masale",
-    description: "Star anise",
+    description: "Whole star anise - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 1000,
@@ -508,9 +508,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-23",
-    name: "Kabab Chini",
+    name: "Kabab Chini Sabut - Unpacked",
     categoryId: "masale",
-    description: "Cubeb pepper",
+    description: "Whole cubeb pepper - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 1600,
@@ -519,9 +519,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-24",
-    name: "Shahi Jeera",
+    name: "Shahi Jeera Sabut - Unpacked",
     categoryId: "masale",
-    description: "Black cumin/caraway seeds",
+    description: "Whole black cumin - Unpacked",
     size: "1kg",
     isPacked: false,
     price: 1400,
@@ -530,9 +530,9 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "mas-25",
-    name: "Kesar",
+    name: "Kesar Sabut - Packed",
     categoryId: "masale",
-    description: "Pure saffron",
+    description: "Pure saffron strands - Packed",
     size: "0.5g",
     isPacked: true,
     price: 125,
@@ -621,7 +621,7 @@ export const PRODUCTS: Product[] = [
     isAvailable: true,
   },
 
-  // ── PUJA & HAWAN (links 72-93) ───────────────────────────────────────────────
+  // ── PUJA & HAWAN ─────────────────────────────────────────────────────────────
   {
     id: "puj-01",
     name: "Hawan Samagri",
@@ -876,7 +876,7 @@ export const PRODUCTS: Product[] = [
     isAvailable: true,
   },
 
-  // ── VRAT & SEEDS (links 94-99 + unassigned links 4, 26) ─────────────────────
+  // ── VRAT & SEEDS ─────────────────────────────────────────────────────────────
   {
     id: "vrat-01",
     name: "Sabudana Medium",
@@ -977,7 +977,7 @@ export const PRODUCTS: Product[] = [
     isAvailable: true,
   },
 
-  // ── MEVA / DRY FRUITS (reusing links 29-43) ─────────────────────────────────
+  // ── MEVA / DRY FRUITS ────────────────────────────────────────────────────────
   {
     id: "mev-01",
     name: "Badam",
@@ -1155,7 +1155,7 @@ export const PRODUCTS: Product[] = [
     isAvailable: true,
   },
 
-  // ── GROCERY & BAKERY (reusing links 47-55) ───────────────────────────────────
+  // ── GROCERY & BAKERY ─────────────────────────────────────────────────────────
   {
     id: "gro-01",
     name: "Chini",
@@ -1259,7 +1259,7 @@ export const PRODUCTS: Product[] = [
     isAvailable: true,
   },
 
-  // ── CLOTH FABRIC DYE (links 1-15) ────────────────────────────────────────────
+  // ── CLOTH FABRIC DYE ─────────────────────────────────────────────────────────
   {
     id: "dye-01",
     name: "Yellow Dye",
@@ -1424,7 +1424,8 @@ export const PRODUCTS: Product[] = [
     size: "1kg",
     isPacked: false,
     price: 100,
-    imageUrl: gd("1P9fcsjD1EL4Gxe2Mqyk2zBQUmRFmgBet"),
+    imageUrl:
+      "https://lh3.googleusercontent.com/d/1pd8A2g2PvmsaPIKqwaigvGh_7jMfr6CE",
     isAvailable: true,
   },
   {
@@ -1435,7 +1436,8 @@ export const PRODUCTS: Product[] = [
     size: "1kg",
     isPacked: false,
     price: 100,
-    imageUrl: gd("1P0yDd22Lz2STiLRopIi835gFTRH6V-Dc"),
+    imageUrl:
+      "https://lh3.googleusercontent.com/d/1pbDB0Zy6pgVkdv39xbNu-otPzrstV9Y0",
     isAvailable: true,
     brand: "India Gate",
   },
@@ -1447,7 +1449,8 @@ export const PRODUCTS: Product[] = [
     size: "1kg",
     isPacked: false,
     price: 100,
-    imageUrl: gd("1P1tcKS5mldYBk87oxj49LTXRQgznltp_"),
+    imageUrl:
+      "https://lh3.googleusercontent.com/d/1p_UaOA5oQGHCmzgxk5ZckHszf8AgDr9o",
     isAvailable: true,
   },
   {
@@ -1458,7 +1461,8 @@ export const PRODUCTS: Product[] = [
     size: "1kg",
     isPacked: false,
     price: 95,
-    imageUrl: gd("1PAvrBRq_PNaugAnW7d5xxPEqlQL7SoZv"),
+    imageUrl:
+      "https://lh3.googleusercontent.com/d/1pUwU3lc06PEH1kaDJu2xdY9YYfY6IiS-",
     isAvailable: true,
   },
   {
@@ -1469,11 +1473,12 @@ export const PRODUCTS: Product[] = [
     size: "1kg",
     isPacked: false,
     price: 110,
-    imageUrl: gd("1PAvrBRq_PNaugAnW7d5xxPEqlQL7SoZv"),
+    imageUrl:
+      "https://lh3.googleusercontent.com/d/1pUgxVTBz1_E7H7Sy9V9VPHpJkf-oIbWA",
     isAvailable: true,
   },
 
-  // ── GOLDIEE MASALE (uploaded images) ─────────────────────────────────────────
+  // ── GOLDIEE MASALE ───────────────────────────────────────────────────────────
   {
     id: "gld-01",
     name: "Goldiee Haldi Powder",
@@ -1784,8 +1789,7 @@ export const PRODUCTS: Product[] = [
     size: "250g",
     isPacked: true,
     price: 50,
-    imageUrl:
-      "https://drive.google.com/uc?export=view&id=1qrKWeSZzS3sFLxFHIO71GPcYOSx-63wC",
+    imageUrl: gd("1qrKWeSZzS3sFLxFHIO71GPcYOSx-63wC"),
     isAvailable: true,
     brand: "Goodtime",
   },
@@ -1797,8 +1801,7 @@ export const PRODUCTS: Product[] = [
     size: "250g",
     isPacked: true,
     price: 48,
-    imageUrl:
-      "https://drive.google.com/uc?export=view&id=1qolN-DRio75i7ZLQyK1xjwMKDT5SXlV5",
+    imageUrl: gd("1qolN-DRio75i7ZLQyK1xjwMKDT5SXlV5"),
     isAvailable: true,
     brand: "Tazza",
   },
@@ -1810,8 +1813,7 @@ export const PRODUCTS: Product[] = [
     size: "250g",
     isPacked: true,
     price: 115,
-    imageUrl:
-      "https://drive.google.com/uc?export=view&id=1qlJbbmR6PNOrELHS9hTVQaUzpJThsta9",
+    imageUrl: gd("1qlJbbmR6PNOrELHS9hTVQaUzpJThsta9"),
     isAvailable: true,
     brand: "Tata",
   },

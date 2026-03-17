@@ -3,13 +3,17 @@ import {
   LogOut,
   Pencil,
   Plus,
+  RefreshCw,
   Trash2,
+  User,
   XCircle,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "../lib/router";
 import { DEFAULT_CATEGORIES, DEFAULT_PRODUCTS } from "./Home";
+
+const PRODUCT_VERSION = "v39";
 
 interface Product {
   id: string;
@@ -39,17 +43,33 @@ interface Order {
   status: string;
   createdAt: number;
 }
+interface Customer {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  password: string;
+  address?: string;
+  city?: string;
+  state?: string;
+}
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const [tab, setTab] = useState<"products" | "categories" | "orders">(
-    "products",
-  );
-  const [products, setProducts] = useState<Product[]>(() =>
-    JSON.parse(
+  const [tab, setTab] = useState<
+    "products" | "categories" | "orders" | "customers"
+  >("products");
+  const [products, setProducts] = useState<Product[]>(() => {
+    const storedVersion = localStorage.getItem("ncrt_product_version");
+    if (storedVersion !== PRODUCT_VERSION) {
+      localStorage.removeItem("ncrt_products");
+      localStorage.removeItem("ncrt_categories");
+      localStorage.setItem("ncrt_product_version", PRODUCT_VERSION);
+    }
+    return JSON.parse(
       localStorage.getItem("ncrt_products") || JSON.stringify(DEFAULT_PRODUCTS),
-    ),
-  );
+    );
+  });
   const [categories, setCategories] = useState<Category[]>(() =>
     JSON.parse(
       localStorage.getItem("ncrt_categories") ||
@@ -58,6 +78,9 @@ export default function AdminDashboard() {
   );
   const [orders, setOrders] = useState<Order[]>(() =>
     JSON.parse(localStorage.getItem("ncrt_orders") || "[]"),
+  );
+  const [customers, setCustomers] = useState<Customer[]>(() =>
+    JSON.parse(localStorage.getItem("ncrt_users") || "[]"),
   );
   const [editProduct, setEditProduct] = useState<Product | null>(null);
   const [editCategory, setEditCategory] = useState<Category | null>(null);
@@ -157,10 +180,25 @@ export default function AdminDashboard() {
     toast.success("Order status updated");
   };
 
+  const refreshCustomers = () => {
+    const fresh = JSON.parse(localStorage.getItem("ncrt_users") || "[]");
+    setCustomers(fresh);
+    toast.success(`${fresh.length} customer(s) loaded`);
+  };
+
   const logout = () => {
     localStorage.removeItem("ncrt_admin");
     navigate("/signin");
   };
+
+  const AVATAR_COLORS = [
+    "bg-indigo-500",
+    "bg-pink-500",
+    "bg-teal-500",
+    "bg-orange-500",
+    "bg-purple-500",
+    "bg-cyan-500",
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -180,25 +218,38 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-3 px-4 mt-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 px-4 mt-4">
         {[
-          { label: "Products", value: products.length, color: "bg-green-500" },
+          {
+            label: "Products",
+            value: products.length,
+            color: "text-green-600",
+            bg: "bg-green-50",
+          },
           {
             label: "Categories",
             value: categories.length,
-            color: "bg-blue-500",
+            color: "text-blue-600",
+            bg: "bg-blue-50",
           },
-          { label: "Orders", value: orders.length, color: "bg-purple-500" },
+          {
+            label: "Orders",
+            value: orders.length,
+            color: "text-purple-600",
+            bg: "bg-purple-50",
+          },
+          {
+            label: "Customers",
+            value: customers.length,
+            color: "text-indigo-600",
+            bg: "bg-indigo-50",
+          },
         ].map((s) => (
           <div
             key={s.label}
             className="bg-white rounded-2xl p-3 shadow-sm text-center"
           >
-            <p
-              className={`text-xl font-bold text-${s.color.split("-")[1]}-600`}
-            >
-              {s.value}
-            </p>
+            <p className={`text-xl font-bold ${s.color}`}>{s.value}</p>
             <p className="text-xs text-gray-500">{s.label}</p>
           </div>
         ))}
@@ -206,17 +257,23 @@ export default function AdminDashboard() {
 
       {/* Tabs */}
       <div className="flex border-b bg-white mx-4 mt-4 rounded-t-xl overflow-hidden">
-        {(["products", "categories", "orders"] as const).map((t) => (
-          <button
-            type="button"
-            key={t}
-            data-ocid={`admin.${t}.tab`}
-            onClick={() => setTab(t)}
-            className={`flex-1 py-3 text-xs font-semibold capitalize ${tab === t ? "border-b-2 border-green-600 text-green-700" : "text-gray-500"}`}
-          >
-            {t}
-          </button>
-        ))}
+        {(["products", "categories", "orders", "customers"] as const).map(
+          (t) => (
+            <button
+              type="button"
+              key={t}
+              data-ocid={`admin.${t}.tab`}
+              onClick={() => setTab(t)}
+              className={`flex-1 py-3 text-xs font-semibold capitalize ${
+                tab === t
+                  ? "border-b-2 border-green-600 text-green-700"
+                  : "text-gray-500"
+              }`}
+            >
+              {t}
+            </button>
+          ),
+        )}
       </div>
 
       <div className="px-4 pb-8">
@@ -676,6 +733,143 @@ export default function AdminDashboard() {
                   </select>
                 </div>
               ))
+            )}
+          </div>
+        )}
+
+        {/* Customers Tab */}
+        {tab === "customers" && (
+          <div className="mt-3">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm font-semibold text-gray-700">
+                {customers.length} Registered Customer
+                {customers.length !== 1 ? "s" : ""}
+              </p>
+              <button
+                type="button"
+                data-ocid="admin.customers.refresh_button"
+                onClick={refreshCustomers}
+                className="flex items-center gap-1.5 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-xl text-xs font-semibold border border-indigo-100"
+              >
+                <RefreshCw size={13} /> Refresh
+              </button>
+            </div>
+
+            {customers.length === 0 ? (
+              <div
+                data-ocid="admin.customers.empty_state"
+                className="text-center py-16 text-gray-400"
+              >
+                <div className="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <User size={28} className="text-indigo-300" />
+                </div>
+                <p className="text-sm font-medium text-gray-500">
+                  No customers registered yet
+                </p>
+                <p className="text-xs text-gray-400 mt-1">
+                  Customers will appear here after sign up
+                </p>
+              </div>
+            ) : (
+              <div data-ocid="admin.customers.list" className="space-y-3">
+                {customers.map((customer, idx) => {
+                  const initials = customer.name
+                    ? customer.name
+                        .trim()
+                        .split(" ")
+                        .map((w: string) => w[0])
+                        .join("")
+                        .slice(0, 2)
+                        .toUpperCase()
+                    : "?";
+                  const avatarColor = AVATAR_COLORS[idx % AVATAR_COLORS.length];
+                  const regDate =
+                    customer.id && !Number.isNaN(Number(customer.id))
+                      ? new Date(Number(customer.id)).toLocaleDateString(
+                          "en-IN",
+                          { day: "numeric", month: "short", year: "numeric" },
+                        )
+                      : null;
+                  const addressLine = [
+                    customer.address,
+                    customer.city,
+                    customer.state,
+                  ]
+                    .filter(Boolean)
+                    .join(", ");
+
+                  return (
+                    <div
+                      key={customer.id || idx}
+                      data-ocid={`admin.customer.${idx + 1}`}
+                      className="bg-white rounded-2xl p-4 shadow-sm flex gap-3 items-start"
+                    >
+                      {/* Avatar */}
+                      <div
+                        className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${avatarColor}`}
+                      >
+                        <span className="text-white font-bold text-sm">
+                          {initials}
+                        </span>
+                      </div>
+
+                      {/* Details */}
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-sm text-gray-800 truncate">
+                          {customer.name || "—"}
+                        </p>
+
+                        <div className="mt-1.5 space-y-1">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs text-gray-400 w-14 flex-shrink-0">
+                              📱 Phone
+                            </span>
+                            <span className="text-xs text-gray-700 font-medium">
+                              {customer.phone || "—"}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs text-gray-400 w-14 flex-shrink-0">
+                              ✉️ Email
+                            </span>
+                            <span className="text-xs text-gray-700 truncate">
+                              {customer.email || "—"}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs text-gray-400 w-14 flex-shrink-0">
+                              🔑 Pass
+                            </span>
+                            <span className="text-xs font-mono bg-gray-50 border border-gray-100 px-2 py-0.5 rounded text-gray-800">
+                              {customer.password || "—"}
+                            </span>
+                          </div>
+                          {addressLine && (
+                            <div className="flex items-start gap-1.5">
+                              <span className="text-xs text-gray-400 w-14 flex-shrink-0 mt-0.5">
+                                📍 Addr
+                              </span>
+                              <span className="text-xs text-gray-600">
+                                {addressLine}
+                              </span>
+                            </div>
+                          )}
+                          {regDate && (
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs text-gray-400 w-14 flex-shrink-0">
+                                📅 Reg
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                {regDate}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             )}
           </div>
         )}
