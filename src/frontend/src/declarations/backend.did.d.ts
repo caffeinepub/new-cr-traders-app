@@ -10,6 +10,16 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface AnonOrder {
+  'id' : string,
+  'customerName' : string,
+  'status' : string,
+  'deliveryAddress' : string,
+  'customerPhone' : string,
+  'createdAt' : Time,
+  'totalAmount' : string,
+  'items' : string,
+}
 export interface Category { 'id' : string, 'name' : string, 'emoji' : string }
 export interface Order {
   'id' : string,
@@ -79,12 +89,17 @@ export interface _SERVICE {
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'createCategory' : ActorMethod<[Category], undefined>,
   'createOrder' : ActorMethod<[Order], undefined>,
+  'createOrderAnon' : ActorMethod<
+    [string, string, string, string, string],
+    string
+  >,
   'createProduct' : ActorMethod<[Product], undefined>,
   'deleteCategory' : ActorMethod<[string], undefined>,
   'deleteOrder' : ActorMethod<[string], undefined>,
   'deleteProduct' : ActorMethod<[string], undefined>,
   'getAllCategories' : ActorMethod<[], Array<Category>>,
   'getAllOrders' : ActorMethod<[], Array<Order>>,
+  'getAllOrdersAdmin' : ActorMethod<[string], Array<AnonOrder>>,
   'getAllProducts' : ActorMethod<[], Array<Product>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
@@ -99,6 +114,7 @@ export interface _SERVICE {
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'updateCategory' : ActorMethod<[Category], undefined>,
   'updateOrder' : ActorMethod<[Order], undefined>,
+  'updateOrderStatusAdmin' : ActorMethod<[string, string, string], undefined>,
   'updateProduct' : ActorMethod<[Product], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;

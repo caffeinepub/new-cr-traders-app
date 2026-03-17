@@ -54,6 +54,16 @@ export const Product = IDL.Record({
   'brand' : IDL.Opt(IDL.Text),
   'price' : IDL.Text,
 });
+export const AnonOrder = IDL.Record({
+  'id' : IDL.Text,
+  'customerName' : IDL.Text,
+  'status' : IDL.Text,
+  'deliveryAddress' : IDL.Text,
+  'customerPhone' : IDL.Text,
+  'createdAt' : Time,
+  'totalAmount' : IDL.Text,
+  'items' : IDL.Text,
+});
 export const UserProfile = IDL.Record({
   'city' : IDL.Text,
   'fullName' : IDL.Text,
@@ -95,12 +105,18 @@ export const idlService = IDL.Service({
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'createCategory' : IDL.Func([Category], [], []),
   'createOrder' : IDL.Func([Order], [], []),
+  'createOrderAnon' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Text],
+      [],
+    ),
   'createProduct' : IDL.Func([Product], [], []),
   'deleteCategory' : IDL.Func([IDL.Text], [], []),
   'deleteOrder' : IDL.Func([IDL.Text], [], []),
   'deleteProduct' : IDL.Func([IDL.Text], [], []),
   'getAllCategories' : IDL.Func([], [IDL.Vec(Category)], ['query']),
   'getAllOrders' : IDL.Func([], [IDL.Vec(Order)], ['query']),
+  'getAllOrdersAdmin' : IDL.Func([IDL.Text], [IDL.Vec(AnonOrder)], ['query']),
   'getAllProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
@@ -119,6 +135,7 @@ export const idlService = IDL.Service({
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'updateCategory' : IDL.Func([Category], [], []),
   'updateOrder' : IDL.Func([Order], [], []),
+  'updateOrderStatusAdmin' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
   'updateProduct' : IDL.Func([Product], [], []),
 });
 
@@ -171,6 +188,16 @@ export const idlFactory = ({ IDL }) => {
     'brand' : IDL.Opt(IDL.Text),
     'price' : IDL.Text,
   });
+  const AnonOrder = IDL.Record({
+    'id' : IDL.Text,
+    'customerName' : IDL.Text,
+    'status' : IDL.Text,
+    'deliveryAddress' : IDL.Text,
+    'customerPhone' : IDL.Text,
+    'createdAt' : Time,
+    'totalAmount' : IDL.Text,
+    'items' : IDL.Text,
+  });
   const UserProfile = IDL.Record({
     'city' : IDL.Text,
     'fullName' : IDL.Text,
@@ -212,12 +239,18 @@ export const idlFactory = ({ IDL }) => {
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'createCategory' : IDL.Func([Category], [], []),
     'createOrder' : IDL.Func([Order], [], []),
+    'createOrderAnon' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Text],
+        [],
+      ),
     'createProduct' : IDL.Func([Product], [], []),
     'deleteCategory' : IDL.Func([IDL.Text], [], []),
     'deleteOrder' : IDL.Func([IDL.Text], [], []),
     'deleteProduct' : IDL.Func([IDL.Text], [], []),
     'getAllCategories' : IDL.Func([], [IDL.Vec(Category)], ['query']),
     'getAllOrders' : IDL.Func([], [IDL.Vec(Order)], ['query']),
+    'getAllOrdersAdmin' : IDL.Func([IDL.Text], [IDL.Vec(AnonOrder)], ['query']),
     'getAllProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
@@ -236,6 +269,7 @@ export const idlFactory = ({ IDL }) => {
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'updateCategory' : IDL.Func([Category], [], []),
     'updateOrder' : IDL.Func([Order], [], []),
+    'updateOrderStatusAdmin' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
     'updateProduct' : IDL.Func([Product], [], []),
   });
 };

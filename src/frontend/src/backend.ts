@@ -106,6 +106,16 @@ export interface _CaffeineStorageCreateCertificateResult {
     method: string;
     blob_hash: string;
 }
+export interface AnonOrder {
+    id: string;
+    customerName: string;
+    status: string;
+    deliveryAddress: string;
+    customerPhone: string;
+    createdAt: Time;
+    totalAmount: string;
+    items: string;
+}
 export interface Order {
     id: string;
     customerName: string;
@@ -155,12 +165,14 @@ export interface backendInterface {
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     createCategory(category: Category): Promise<void>;
     createOrder(order: Order): Promise<void>;
+    createOrderAnon(customerName: string, customerPhone: string, deliveryAddress: string, items: string, totalAmount: string): Promise<string>;
     createProduct(product: Product): Promise<void>;
     deleteCategory(id: string): Promise<void>;
     deleteOrder(id: string): Promise<void>;
     deleteProduct(id: string): Promise<void>;
     getAllCategories(): Promise<Array<Category>>;
     getAllOrders(): Promise<Array<Order>>;
+    getAllOrdersAdmin(pin: string): Promise<Array<AnonOrder>>;
     getAllProducts(): Promise<Array<Product>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
@@ -175,6 +187,7 @@ export interface backendInterface {
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     updateCategory(category: Category): Promise<void>;
     updateOrder(order: Order): Promise<void>;
+    updateOrderStatusAdmin(orderId: string, newStatus: string, pin: string): Promise<void>;
     updateProduct(product: Product): Promise<void>;
 }
 import type { Product as _Product, UserProfile as _UserProfile, UserRole as _UserRole, _CaffeineStorageRefillInformation as __CaffeineStorageRefillInformation, _CaffeineStorageRefillResult as __CaffeineStorageRefillResult } from "./declarations/backend.did.d.ts";
@@ -334,6 +347,20 @@ export class Backend implements backendInterface {
             return result;
         }
     }
+    async createOrderAnon(arg0: string, arg1: string, arg2: string, arg3: string, arg4: string): Promise<string> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.createOrderAnon(arg0, arg1, arg2, arg3, arg4);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.createOrderAnon(arg0, arg1, arg2, arg3, arg4);
+            return result;
+        }
+    }
     async createProduct(arg0: Product): Promise<void> {
         if (this.processError) {
             try {
@@ -415,6 +442,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.getAllOrders();
+            return result;
+        }
+    }
+    async getAllOrdersAdmin(arg0: string): Promise<Array<AnonOrder>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllOrdersAdmin(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllOrdersAdmin(arg0);
             return result;
         }
     }
@@ -611,6 +652,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.updateOrder(arg0);
+            return result;
+        }
+    }
+    async updateOrderStatusAdmin(arg0: string, arg1: string, arg2: string): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateOrderStatusAdmin(arg0, arg1, arg2);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateOrderStatusAdmin(arg0, arg1, arg2);
             return result;
         }
     }

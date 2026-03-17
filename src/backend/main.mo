@@ -5,11 +5,15 @@ import Text "mo:core/Text";
 import Runtime "mo:core/Runtime";
 import Time "mo:core/Time";
 import Principal "mo:core/Principal";
+import Int "mo:core/Int";
+import Iter "mo:core/Iter";
+import Migration "migration";
 
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 import MixinStorage "blob-storage/Mixin";
 
+(with migration = Migration.run)
 actor {
   include MixinStorage();
 
@@ -22,6 +26,7 @@ actor {
 
   // Orders
   let orderStore = Map.empty<Text, Order>();
+  let anonOrderStore = Map.empty<Text, AnonOrder>();
 
   // User Profiles
   let userProfiles = Map.empty<Principal, UserProfile>();
@@ -76,12 +81,15 @@ actor {
     createdAt : Time.Time;
   };
 
-  // Review Types
-  public type Review = {
-    productId : Text;
-    userId : Text;
-    rating : Nat;
-    comment : Text;
+  public type AnonOrder = {
+    id : Text;
+    customerName : Text;
+    customerPhone : Text;
+    deliveryAddress : Text;
+    items : Text;
+    totalAmount : Text;
+    status : Text;
+    createdAt : Time.Time;
   };
 
   public type UserProfile = {
@@ -96,7 +104,6 @@ actor {
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
 
-  // User Profile Management
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can view profiles");
@@ -403,4 +410,56 @@ actor {
       productStore.add(product.id, product);
     };
   };
+
+  // Anonymous Order Management Functions (No ICP Authentication Required)
+  public shared func createOrderAnon(
+    customerName : Text,
+    customerPhone : Text,
+    deliveryAddress : Text,
+    items : Text,
+    totalAmount : Text,
+  ) : async Text {
+    let orderId = Time.now().toText();
+    let order : AnonOrder = {
+      id = orderId;
+      customerName;
+      customerPhone;
+      deliveryAddress;
+      items;
+      totalAmount;
+      status = "confirmed";
+      createdAt = Time.now();
+    };
+    anonOrderStore.add(orderId, order);
+    orderId;
+  };
+
+  public query func getAllOrdersAdmin(pin : Text) : async [AnonOrder] {
+    if (pin != adminPin) {
+      Runtime.trap("Unauthorized");
+    };
+    let iter = anonOrderStore.values();
+    let orders = iter.toArray();
+    let sortedOrders = orders.sort(
+      func(a, b) {
+        Int.compare(b.createdAt, a.createdAt);
+      }
+    );
+    sortedOrders;
+  };
+
+  public shared func updateOrderStatusAdmin(orderId : Text, newStatus : Text, pin : Text) : async () {
+    if (pin != adminPin) {
+      Runtime.trap("Unauthorized");
+    };
+
+    switch (anonOrderStore.get(orderId)) {
+      case (null) { Runtime.trap("Order not found") };
+      case (?existingOrder) {
+        let updatedOrder = { existingOrder with status = newStatus };
+        anonOrderStore.add(orderId, updatedOrder);
+      };
+    };
+  };
 };
+

@@ -1,5 +1,6 @@
 import {
   CheckCircle,
+  Loader2,
   LogOut,
   Pencil,
   Plus,
@@ -8,12 +9,15 @@ import {
   User,
   XCircle,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+import type { AnonOrder } from "../backend";
+import { useActor } from "../hooks/useActor";
 import { useNavigate } from "../lib/router";
 import { DEFAULT_CATEGORIES, DEFAULT_PRODUCTS } from "./Home";
 
 const PRODUCT_VERSION = "v39";
+const ADMIN_PIN = "NCR9358";
 
 interface Product {
   id: string;
@@ -33,7 +37,7 @@ interface Category {
   name: string;
   emoji: string;
 }
-interface Order {
+interface LocalOrder {
   id: string;
   customerName: string;
   customerPhone: string;
@@ -54,8 +58,36 @@ interface Customer {
   state?: string;
 }
 
+// Merged order type that handles both local and backend orders
+interface MergedOrder {
+  id: string;
+  customerName: string;
+  customerPhone: string;
+  deliveryAddress: string;
+  items: string;
+  totalAmount: string;
+  status: string;
+  createdAt: number; // always milliseconds
+  isBackend: boolean;
+}
+
+function toMergedOrder(o: AnonOrder): MergedOrder {
+  return {
+    id: o.id,
+    customerName: o.customerName,
+    customerPhone: o.customerPhone,
+    deliveryAddress: o.deliveryAddress,
+    items: o.items,
+    totalAmount: o.totalAmount,
+    status: o.status,
+    createdAt: Number(o.createdAt) / 1_000_000, // nanoseconds → ms
+    isBackend: true,
+  };
+}
+
 export default function AdminDashboard() {
   const navigate = useNavigate();
+  const { actor } = useActor();
   const [tab, setTab] = useState<
     "products" | "categories" | "orders" | "customers"
   >("products");
@@ -76,9 +108,8 @@ export default function AdminDashboard() {
         JSON.stringify(DEFAULT_CATEGORIES),
     ),
   );
-  const [orders, setOrders] = useState<Order[]>(() =>
-    JSON.parse(localStorage.getItem("ncrt_orders") || "[]"),
-  );
+  const [orders, setOrders] = useState<MergedOrder[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
   const [customers, setCustomers] = useState<Customer[]>(() =>
     JSON.parse(localStorage.getItem("ncrt_users") || "[]"),
   );
@@ -95,6 +126,48 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!localStorage.getItem("ncrt_admin")) navigate("/admin");
   }, [navigate]);
+
+  // Fetch orders from backend and merge with localStorage
+  const fetchOrders = useCallback(async () => {
+    setOrdersLoading(true);
+    const localOrders: LocalOrder[] = JSON.parse(
+      localStorage.getItem("ncrt_orders") || "[]",
+    );
+    const localMerged: MergedOrder[] = localOrders.map((o) => ({
+      ...o,
+      isBackend: false,
+    }));
+
+    try {
+      if (actor) {
+        const backendOrders = await actor.getAllOrdersAdmin(ADMIN_PIN);
+        const backendMerged = backendOrders.map(toMergedOrder);
+        // Merge: prefer backend orders, use local as fallback for those not in backend
+        const backendIds = new Set(backendMerged.map((o) => o.id));
+        const localOnly = localMerged.filter((o) => !backendIds.has(o.id));
+        const combined = [...backendMerged, ...localOnly].sort(
+          (a, b) => b.createdAt - a.createdAt,
+        );
+        setOrders(combined);
+      } else {
+        setOrders(localMerged.sort((a, b) => b.createdAt - a.createdAt));
+      }
+    } catch (e) {
+      console.error("Failed to fetch backend orders", e);
+      // Fallback to localStorage only
+      setOrders(localMerged.sort((a, b) => b.createdAt - a.createdAt));
+      toast.error("Could not load backend orders, showing local orders");
+    } finally {
+      setOrdersLoading(false);
+    }
+  }, [actor]);
+
+  // Fetch orders when tab switches to orders
+  useEffect(() => {
+    if (tab === "orders") {
+      fetchOrders();
+    }
+  }, [tab, fetchOrders]);
 
   const saveProducts = (p: Product[]) => {
     setProducts(p);
@@ -173,11 +246,33 @@ export default function AdminDashboard() {
     toast.success("Product updated");
   };
 
-  const updateOrderStatus = (id: string, status: string) => {
-    const updated = orders.map((o) => (o.id === id ? { ...o, status } : o));
-    setOrders(updated);
-    localStorage.setItem("ncrt_orders", JSON.stringify(updated));
-    toast.success("Order status updated");
+  const updateOrderStatus = async (order: MergedOrder, status: string) => {
+    // Optimistic update
+    setOrders((prev) =>
+      prev.map((o) => (o.id === order.id ? { ...o, status } : o)),
+    );
+
+    // Update localStorage orders too
+    const localOrders: LocalOrder[] = JSON.parse(
+      localStorage.getItem("ncrt_orders") || "[]",
+    );
+    const updatedLocal = localOrders.map((o) =>
+      o.id === order.id ? { ...o, status } : o,
+    );
+    localStorage.setItem("ncrt_orders", JSON.stringify(updatedLocal));
+
+    // If backend order, also update on backend
+    if (order.isBackend && actor) {
+      try {
+        await actor.updateOrderStatusAdmin(order.id, status, ADMIN_PIN);
+        toast.success("Order status updated");
+      } catch (e) {
+        console.error("Backend status update failed", e);
+        toast.error("Status saved locally, backend sync failed");
+      }
+    } else {
+      toast.success("Order status updated");
+    }
   };
 
   const refreshCustomers = () => {
@@ -663,76 +758,139 @@ export default function AdminDashboard() {
 
         {/* Orders Tab */}
         {tab === "orders" && (
-          <div className="mt-3 space-y-3">
-            {orders.length === 0 ? (
+          <div className="mt-3">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm font-semibold text-gray-700">
+                {ordersLoading
+                  ? "Loading orders..."
+                  : `${orders.length} Order${orders.length !== 1 ? "s" : ""}`}
+              </p>
+              <button
+                type="button"
+                data-ocid="admin.orders.refresh_button"
+                onClick={fetchOrders}
+                disabled={ordersLoading}
+                className="flex items-center gap-1.5 bg-purple-50 text-purple-700 px-3 py-1.5 rounded-xl text-xs font-semibold border border-purple-100 disabled:opacity-50"
+              >
+                {ordersLoading ? (
+                  <Loader2 size={13} className="animate-spin" />
+                ) : (
+                  <RefreshCw size={13} />
+                )}
+                Refresh
+              </button>
+            </div>
+
+            {ordersLoading ? (
+              <div
+                data-ocid="admin.orders.loading_state"
+                className="flex flex-col items-center justify-center py-16 text-gray-400"
+              >
+                <Loader2
+                  size={32}
+                  className="animate-spin text-purple-400 mb-3"
+                />
+                <p className="text-sm">Fetching orders from server...</p>
+              </div>
+            ) : orders.length === 0 ? (
               <div
                 data-ocid="admin.orders.empty_state"
                 className="text-center py-12 text-gray-400"
               >
                 <p className="text-4xl mb-2">📋</p>
                 <p className="text-sm">No orders yet</p>
+                <p className="text-xs mt-1 text-gray-300">
+                  Orders placed by customers will appear here
+                </p>
               </div>
             ) : (
-              orders.map((order, idx) => (
-                <div
-                  key={order.id}
-                  data-ocid={`admin.order.${idx + 1}`}
-                  className="bg-white rounded-2xl p-4 shadow-sm"
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <p className="font-semibold text-sm">
-                        {order.customerName}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {order.customerPhone}
-                      </p>
+              <div className="space-y-3">
+                {orders.map((order, idx) => (
+                  <div
+                    key={order.id}
+                    data-ocid={`admin.order.${idx + 1}`}
+                    className="bg-white rounded-2xl p-4 shadow-sm"
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <p className="font-semibold text-sm">
+                            {order.customerName || "Guest"}
+                          </p>
+                          {order.isBackend && (
+                            <span className="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium">
+                              ✓ Synced
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-500">
+                          {order.customerPhone}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          🕐 {new Date(order.createdAt).toLocaleString("en-IN")}
+                        </p>
+                      </div>
+                      <span className="text-green-700 font-bold text-sm">
+                        ₹{order.totalAmount}
+                      </span>
                     </div>
-                    <span className="text-green-700 font-bold text-sm">
-                      ₹{order.totalAmount}
-                    </span>
-                  </div>
-                  <p className="text-xs text-gray-500 mb-2">
-                    📍 {order.deliveryAddress}
-                  </p>
-                  <div className="mb-2">
-                    {(() => {
-                      try {
-                        return JSON.parse(order.items)
-                          .slice(0, 2)
-                          .map(
-                            (i: {
-                              productId: string;
-                              name: string;
-                              quantity: number;
-                            }) => (
+                    {order.deliveryAddress && (
+                      <p className="text-xs text-gray-500 mb-2">
+                        📍 {order.deliveryAddress}
+                      </p>
+                    )}
+                    <div className="mb-3 bg-gray-50 rounded-xl p-2">
+                      <p className="text-xs font-semibold text-gray-600 mb-1">
+                        Items:
+                      </p>
+                      {(() => {
+                        try {
+                          const parsedItems = JSON.parse(order.items);
+                          return parsedItems.map(
+                            (
+                              i: {
+                                productId: string;
+                                name: string;
+                                quantity: number;
+                                price: number;
+                                size?: string;
+                              },
+                              iIdx: number,
+                            ) => (
                               <p
-                                key={i.productId}
+                                key={`${i.productId}-${iIdx}`}
                                 className="text-xs text-gray-600"
                               >
-                                {i.name} × {i.quantity}
+                                • {i.name}
+                                {i.size ? ` (${i.size})` : ""} × {i.quantity}
+                                {i.price ? ` = ₹${i.price * i.quantity}` : ""}
                               </p>
                             ),
                           );
-                      } catch {
-                        return null;
-                      }
-                    })()}
+                        } catch {
+                          return (
+                            <p className="text-xs text-gray-400">
+                              {order.items}
+                            </p>
+                          );
+                        }
+                      })()}
+                    </div>
+                    <select
+                      data-ocid={`admin.order.${idx + 1}.status_select`}
+                      value={order.status}
+                      onChange={(e) => updateOrderStatus(order, e.target.value)}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-xs"
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="confirmed">Confirmed</option>
+                      <option value="ready">Ready for Pickup</option>
+                      <option value="delivered">Picked Up / Delivered</option>
+                      <option value="cancelled">Cancelled</option>
+                    </select>
                   </div>
-                  <select
-                    data-ocid={`admin.order.${idx + 1}.status_select`}
-                    value={order.status}
-                    onChange={(e) =>
-                      updateOrderStatus(order.id, e.target.value)
-                    }
-                    className="w-full border border-gray-200 rounded-lg px-3 py-1.5 text-xs"
-                  >
-                    <option value="pending">Pending</option>
-                    <option value="confirmed">Confirmed</option>
-                    <option value="delivered">Delivered</option>
-                  </select>
-                </div>
-              ))
+                ))}
+              </div>
             )}
           </div>
         )}

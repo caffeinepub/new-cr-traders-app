@@ -1184,7 +1184,7 @@ export const PRODUCTS: Product[] = [
     categoryId: "grocery",
     description: "Chickpea flour 1kg",
     size: "1kg",
-    isPacked: false,
+    isPacked: true,
     price: 95,
     imageUrl: gd("1oXSXnJdNctacDgBE0wmYMatm3tzaj7DK"),
     isAvailable: true,
