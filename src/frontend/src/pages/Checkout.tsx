@@ -1,7 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useActor } from "../hooks/useActor";
+import { createActorWithConfig } from "../config";
 
 import { useApp } from "../contexts/AppContext";
 import { useNavigate } from "../lib/router";
@@ -9,15 +9,15 @@ import { useNavigate } from "../lib/router";
 export default function Checkout() {
   const navigate = useNavigate();
   const { cart, cartTotal, clearCart, setLastOrder } = useApp();
-  const { actor } = useActor();
   const user = JSON.parse(localStorage.getItem("ncrt_user") || "{}");
   const [loading, setLoading] = useState(false);
 
   const placeOrder = async () => {
     setLoading(true);
     try {
+      const orderId = Date.now().toString();
       const order = {
-        id: Date.now().toString(),
+        id: orderId,
         customerId: user.id || "guest",
         customerName: user.fullName || "",
         customerPhone: user.phone || "",
@@ -27,24 +27,25 @@ export default function Checkout() {
         status: "confirmed",
         createdAt: Date.now(),
       };
+
+      // Save to localStorage
       const orders = JSON.parse(localStorage.getItem("ncrt_orders") || "[]");
       orders.unshift(order);
       localStorage.setItem("ncrt_orders", JSON.stringify(orders));
 
-      // Also save to backend (non-blocking)
-      if (actor) {
-        try {
-          await actor.createOrderAnon(
-            user.fullName || "Guest",
-            user.phone || "",
-            `${user.address || ""}, ${user.city || "Aligarh"}, ${user.state || "UP"}`,
-            JSON.stringify(cart),
-            cartTotal.toFixed(2),
-          );
-        } catch (e) {
-          console.error("Backend order save failed", e);
-          // don't block the flow, localStorage save is the fallback
-        }
+      // Save to backend - create fresh actor to avoid initialization issues
+      try {
+        const actor = await createActorWithConfig();
+        await actor.createOrderAnon(
+          user.fullName || "Guest",
+          user.phone || "",
+          `${user.address || ""}, ${user.city || "Aligarh"}, ${user.state || "UP"}`,
+          JSON.stringify(cart),
+          cartTotal.toFixed(2),
+        );
+      } catch (e) {
+        console.error("Backend order save failed", e);
+        // Continue with WhatsApp even if backend fails
       }
 
       const itemsText = cart
@@ -54,7 +55,7 @@ export default function Checkout() {
         )
         .join("\n");
       const waText = encodeURIComponent(
-        `\ud83d\uded2 *New Order - NEW C.R. TRADERS App*\n\n\ud83d\udc64 Customer: ${user.fullName || "Guest"}\n\ud83d\udcde Phone: ${user.phone || "N/A"}\n\ud83d\udccd Pickup from shop\n\n\ud83d\udce6 Items:\n${itemsText}\n\n\ud83d\udcb0 Total: \u20b9${cartTotal.toFixed(2)}\n\n#OrderID: ${order.id}\n\n\ud83c\udfea Customer will come to shop to collect`,
+        `\ud83d\uded2 *New Order - NEW C.R. TRADERS App*\n\n\ud83d\udc64 Customer: ${user.fullName || "Guest"}\n\ud83d\udcde Phone: ${user.phone || "N/A"}\n\ud83d\udccd Pickup from shop\n\n\ud83d\udce6 Items:\n${itemsText}\n\n\ud83d\udcb0 Total: \u20b9${cartTotal.toFixed(2)}\n\n#OrderID: ${orderId}\n\n\ud83c\udfea Customer will come to shop to collect`,
       );
       window.open(`https://wa.me/919358251328?text=${waText}`, "_blank");
 

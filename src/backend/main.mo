@@ -7,13 +7,13 @@ import Time "mo:core/Time";
 import Principal "mo:core/Principal";
 import Int "mo:core/Int";
 import Iter "mo:core/Iter";
-import Migration "migration";
+
 
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 import MixinStorage "blob-storage/Mixin";
 
-(with migration = Migration.run)
+
 actor {
   include MixinStorage();
 
